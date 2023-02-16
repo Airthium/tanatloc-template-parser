@@ -1,0 +1,23 @@
+{
+  "name": "tanatloc-template-parser",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "repository": "git@github.com:Airthium/tanatloc-template-parser.git",
+  "author": {
+    "name": "Airthium",
+    "url": "https://github.com/orgs/Airthium/people"
+  },
+  "license": "AGPL3+",
+  "packageManager": "yarn@3.4.1",
+  "scripts": {
+    "build": "tsc",
+    "test": "yarn build && node lib/index.js ./test/test.edp.ejs"
+  },
+  "dependencies": {
+    "typescript": "4.9.5"
+  },
+  "devDependencies": {
+    "@types/node": "18.13.0"
+  }
+}
