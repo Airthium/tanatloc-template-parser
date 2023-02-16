@@ -2,14 +2,17 @@ try{
     real i=0;
     { int j = 1;
       real value = int1d(Th)(Ux* Uy);
-    }
-
-    varf problem ([Ux, Uy], [Uhy, Uhy])
+    } varf problem ([Ux, Uy], [Uhy, Uhy])
       = int2d(Th)(
         grad(U)' * grad(Uh)
       );
   
 
+
+      
+    for (int i = 0; i < 10; ++i){
+      cout << i << endl;
+    }
       
     <%# EJS COMMENT-%>
   

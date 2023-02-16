@@ -1,4 +1,16 @@
-export const comments = [
+export interface Def {
+  name: string
+  identifier: string
+  type?: string
+  dir?: -1 | 1
+  spaceBefore?: true
+  spaceAfter?: true
+  lineBreak?: true
+  enableEJS?: true
+  disableEJS?: true
+}
+
+export const comments: Def[] = [
   {
     name: 'inline',
     identifier: '//'
@@ -6,12 +18,13 @@ export const comments = [
   { name: 'multilineStart', identifier: '/*' }
 ]
 
-export const blocks = [
+export const blocks: Def[] = [
   {
     name: 'blockOpen',
     identifier: '{',
     type: 'block',
     dir: 1,
+    spaceBefore: true,
     lineBreak: true
   },
   {
@@ -87,7 +100,7 @@ export const blocks = [
   }
 ]
 
-export const operators = [
+export const operators: Def[] = [
   {
     name: 'streamIn',
     identifier: '<<',

@@ -9,6 +9,7 @@ export interface Node {
   value: string
   start?: string
   end?: string
+  spaceBefore?: boolean
   lineBreak?: boolean
   children?: Node[]
   parent: Node
@@ -36,36 +37,38 @@ let inComment = false
 let inEJS = false
 
 /**
- * Parse line
- * @param line Line
+ * Parse comment
+ * @param text Text
+ * @returns Parsed?
  */
-const parseLine = (line: string): void => {
-  if (!line) return
-
-  line = line.trim()
-
+const parseComment = (text: string): boolean => {
   // Comments
   if (inComment) {
-    if (line.includes('*/')) {
-      const pos = line.indexOf('*/')
-      const begin = line.slice(0, pos)
-      const end = line.slice(pos)
+    if (text.includes('*/')) {
+      const pos = text.indexOf('*/')
+      const begin = text.slice(0, pos)
+      const end = text.slice(pos)
 
       currentNode.value += begin
       currentNode = currentNode.parent
 
-      parseLine(end)
+      parseLoop(end)
+
+      return true
     } else {
-      currentNode.value += line
+      currentNode.value += text
+
+      return true
     }
   }
 
-  if (line.includes('/*')) {
-    const pos = line.indexOf('/*')
-    const begin = line.slice(0, pos)
-    const end = line.slice(pos)
+  // Multiline comment
+  if (text.includes('/*')) {
+    const pos = text.indexOf('/*')
+    const begin = text.slice(0, pos)
+    const end = text.slice(pos)
 
-    parseLine(begin)
+    parseLoop(begin)
 
     currentNode.children = [
       ...(currentNode.children || []),
@@ -80,15 +83,16 @@ const parseLine = (line: string): void => {
     currentNode = currentNode.children[currentNode.children.length - 1]
     inComment = true
 
-    return
+    return true
   }
 
-  if (line.includes('//')) {
-    const pos = line.indexOf('//')
-    const begin = line.slice(0, pos)
-    const end = line.slice(pos)
+  // Inline comment
+  if (text.includes('//')) {
+    const pos = text.indexOf('//')
+    const begin = text.slice(0, pos)
+    const end = text.slice(pos)
 
-    parseLine(begin)
+    parseLoop(begin)
 
     currentNode.children = [
       ...(currentNode.children || []),
@@ -100,16 +104,24 @@ const parseLine = (line: string): void => {
       }
     ]
 
-    return
+    return true
   }
 
-  // String
-  if (inEJS && line.includes("'")) {
-    const pos = line.indexOf("'")
-    const begin = line.slice(0, pos)
-    const end = line.slice(pos + 1)
+  return false
+}
 
-    parseLine(begin)
+/**
+ * Parse string
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseString = (text: string): boolean => {
+  if (inEJS && text.includes("'")) {
+    const pos = text.indexOf("'")
+    const begin = text.slice(0, pos)
+    const end = text.slice(pos + 1)
+
+    parseLoop(begin)
 
     const pos2 = end.indexOf("'")
     const begin2 = end.slice(0, pos2)
@@ -124,19 +136,27 @@ const parseLine = (line: string): void => {
       }
     ]
 
-    parseLine(end2)
+    parseLoop(end2)
 
-    return
+    return true
   }
 
-  // Blocks
-  for (const block of blocks) {
-    if (line.includes(block.identifier)) {
-      const pos = line.indexOf(block.identifier)
-      const begin = line.slice(0, pos)
-      const end = line.slice(pos + block.identifier.length)
+  return false
+}
 
-      parseLine(begin)
+/**
+ * Parse block
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseBlocks = (text: string): boolean => {
+  for (const block of blocks) {
+    if (text.includes(block.identifier)) {
+      const pos = text.indexOf(block.identifier)
+      const begin = text.slice(0, pos)
+      const end = text.slice(pos + block.identifier.length)
+
+      parseLoop(begin)
 
       if (block.enableEJS) inEJS = true
       if (block.disableEJS) inEJS = false
@@ -149,6 +169,7 @@ const parseLine = (line: string): void => {
             type: block.type,
             value: '',
             start: block.identifier,
+            spaceBefore: block.spaceBefore,
             lineBreak: block.lineBreak,
             parent: currentNode
           }
@@ -159,20 +180,28 @@ const parseLine = (line: string): void => {
         currentNode = currentNode.parent ?? tree
       }
 
-      parseLine(end)
+      parseLoop(end)
 
-      return
+      return true
     }
   }
 
-  // Operators
-  for (const operator of operators) {
-    if (line.includes(operator.identifier)) {
-      const pos = line.indexOf(operator.identifier)
-      const begin = line.slice(0, pos)
-      const end = line.slice(pos + operator.identifier.length)
+  return false
+}
 
-      parseLine(begin)
+/**
+ * Parse operators
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseOperators = (text: string): boolean => {
+  for (const operator of operators) {
+    if (text.includes(operator.identifier)) {
+      const pos = text.indexOf(operator.identifier)
+      const begin = text.slice(0, pos)
+      const end = text.slice(pos + operator.identifier.length)
+
+      parseLoop(begin)
 
       currentNode.children = [
         ...(currentNode.children || []),
@@ -180,36 +209,59 @@ const parseLine = (line: string): void => {
           family: 'operators',
           type: operator.type,
           value: operator.identifier,
+          spaceBefore: operator.spaceBefore,
+          lineBreak: operator.lineBreak,
           parent: currentNode
         }
       ]
 
-      parseLine(end)
+      parseLoop(end)
 
-      return
+      return true
     }
   }
 
-  // Rest
-  const values = line.split(' ')
-  const children = []
-  for (let i = 0; i < values.length; ++i) {
-    const value = values[i]
-    if (value)
-      children.push({
-        type: 'text',
-        value,
-        parent: currentNode
-      })
+  return false
+}
 
-    if (i < values.length - 1)
-      children.push({
-        type: 'space',
-        value: '',
-        parent: currentNode
-      })
+/**
+ * Parse loop
+ * @param text Text
+ */
+const parseLoop = (text: string): void => {
+  if (!text) return
+
+  text = text.trim()
+
+  if (
+    !parseComment(text) && // Comments
+    !parseString(text) && // String
+    !parseBlocks(text) && // Blocks
+    !parseOperators(text) // Operators
+  ) {
+    // Rest
+    const values = text.split(' ')
+    const children = []
+
+    for (let i = 0; i < values.length; ++i) {
+      const value = values[i]
+      if (value)
+        children.push({
+          type: 'text',
+          value,
+          parent: currentNode
+        })
+
+      if (i < values.length - 1)
+        children.push({
+          type: 'space',
+          value: '',
+          parent: currentNode
+        })
+    }
+
+    currentNode.children = [...(currentNode.children || []), ...children]
   }
-  currentNode.children = [...(currentNode.children || []), ...children]
 }
 
 /**
@@ -221,7 +273,7 @@ export const parse = (text: string): Tree => {
   const lines = text.split('\n')
 
   lines.forEach((line) => {
-    parseLine(line)
+    parseLoop(line)
     currentNode.children = [
       ...(currentNode.children || []),
       {
