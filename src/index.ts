@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
 import { parse } from './parse.js'
+import { beautify } from './beautify.js'
 import { stringify } from './stringify.js'
 
 // Input file
@@ -25,9 +26,11 @@ const content = fileContent.toString()
 const tree = parse(content)
 // console.dir(tree, { depth: null })
 
-const code = stringify(tree)
+const beautifiedTree = beautify(tree)
+
+const code = stringify(beautifiedTree)
 if (outputFile) {
   fs.writeFileSync(outputFile, code)
 } else {
-  console.log(code)
+  console.info(code)
 }

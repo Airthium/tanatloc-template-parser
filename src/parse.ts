@@ -1,17 +1,24 @@
-import { blocks, operators } from './defs.js'
+import {
+  blocks,
+  Def,
+  inlineComment,
+  lineBreak,
+  multilineComment,
+  operators,
+  root,
+  string
+} from './defs.js'
 
 /**
  * Node interface
  */
-export interface Node {
+export interface Node extends Def {
   family?: string
-  type: string
-  value: string
-  start?: string
-  end?: string
-  spaceBefore?: boolean
-  lineBreak?: boolean
+  value?: string
+  end?: Def
   children?: Node[]
+  left?: Node
+  right?: Node
   parent: Node
 }
 
@@ -22,8 +29,7 @@ export interface Tree extends Node {}
 
 // Tree
 const tree: Tree = {
-  type: 'root',
-  value: '',
+  ...root,
   parent: null
 }
 
@@ -44,13 +50,15 @@ let inEJS = false
 const parseComment = (text: string): boolean => {
   // Comments
   if (inComment) {
-    if (text.includes('*/')) {
-      const pos = text.indexOf('*/')
-      const begin = text.slice(0, pos)
-      const end = text.slice(pos)
+    if (text.includes(multilineComment[1].identifier)) {
+      const pos = text.indexOf(multilineComment[1].identifier)
+      const begin = text.slice(0, pos + multilineComment[1].identifier.length)
+      const end = text.slice(pos + multilineComment[1].identifier.length)
 
       currentNode.value += begin
       currentNode = currentNode.parent
+
+      inComment = false
 
       parseLoop(end)
 
@@ -63,8 +71,8 @@ const parseComment = (text: string): boolean => {
   }
 
   // Multiline comment
-  if (text.includes('/*')) {
-    const pos = text.indexOf('/*')
+  if (text.includes(multilineComment[0].identifier)) {
+    const pos = text.indexOf(multilineComment[0].identifier)
     const begin = text.slice(0, pos)
     const end = text.slice(pos)
 
@@ -74,7 +82,7 @@ const parseComment = (text: string): boolean => {
       ...(currentNode.children || []),
       {
         family: 'comment',
-        type: 'multiline',
+        ...multilineComment[0],
         value: end,
         parent: currentNode
       }
@@ -98,7 +106,7 @@ const parseComment = (text: string): boolean => {
       ...(currentNode.children || []),
       {
         family: 'comment',
-        type: 'inline',
+        ...inlineComment,
         value: end,
         parent: currentNode
       }
@@ -130,7 +138,7 @@ const parseString = (text: string): boolean => {
     currentNode.children = [
       ...(currentNode.children || []),
       {
-        type: 'string',
+        ...string,
         value: "'" + begin2 + "'",
         parent: currentNode
       }
@@ -166,17 +174,14 @@ const parseBlocks = (text: string): boolean => {
           ...(currentNode.children || []),
           {
             family: 'blocks',
-            type: block.type,
-            value: '',
-            start: block.identifier,
-            spaceBefore: block.spaceBefore,
-            lineBreak: block.lineBreak,
+            ...block,
             parent: currentNode
           }
         ]
+
         currentNode = currentNode.children[currentNode.children.length - 1]
       } else {
-        currentNode.end = block.identifier
+        currentNode.end = block
         currentNode = currentNode.parent ?? tree
       }
 
@@ -207,10 +212,7 @@ const parseOperators = (text: string): boolean => {
         ...(currentNode.children || []),
         {
           family: 'operators',
-          type: operator.type,
-          value: operator.identifier,
-          spaceBefore: operator.spaceBefore,
-          lineBreak: operator.lineBreak,
+          ...operator,
           parent: currentNode
         }
       ]
@@ -255,7 +257,6 @@ const parseLoop = (text: string): void => {
       if (i < values.length - 1)
         children.push({
           type: 'space',
-          value: '',
           parent: currentNode
         })
     }
@@ -272,16 +273,20 @@ const parseLoop = (text: string): void => {
 export const parse = (text: string): Tree => {
   const lines = text.split('\n')
 
+  // Loop over lines
   lines.forEach((line) => {
     parseLoop(line)
-    currentNode.children = [
-      ...(currentNode.children || []),
-      {
-        type: 'line_break',
-        value: '',
-        parent: currentNode
-      }
-    ]
+    if (inComment) {
+      currentNode.value += '\n'
+    } else {
+      currentNode.children = [
+        ...(currentNode.children || []),
+        {
+          ...lineBreak,
+          parent: currentNode
+        }
+      ]
+    }
   })
 
   return tree

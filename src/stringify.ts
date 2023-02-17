@@ -3,15 +3,15 @@ import { Node, Tree } from './parse.js'
 // Indent length
 const indentLength = 4
 
-// In EJS?
-let inEJS = true
+// // In EJS?
+// let inEJS = true
 
 /**
  * Set indent
  * @param indent Indent
  * @returns Spaces
  */
-const setIndent = (indent: number): string => {
+export const setIndent = (indent: number): string => {
   let spaces = ''
 
   for (let i = 0; i < indentLength * indent; ++i) {
@@ -26,7 +26,7 @@ const setIndent = (indent: number): string => {
  * @param code Code
  * @returns Code
  */
-const eatIndent = (code: string): string => {
+export const eatIndent = (code: string): string => {
   return code.slice(0, -indentLength)
 }
 
@@ -42,62 +42,173 @@ const stringifyBlock = (code: string, child: Node, indent: number): string => {
   let beforeEnd = ''
   let afterEnd = ''
 
-  // Increase indent
-  if (child.type === 'block' || child.type === 'ejs') indent++
-
-  // Space before?
-  if (
-    child.spaceBefore &&
-    code.length &&
-    code.slice(-1) !== ' ' &&
-    code.slice(-1) !== '\n'
-  )
-    beforeStart = ' '
+  // // Space before?
+  // if (
+  //   child.spaceBefore &&
+  //   code.length &&
+  //   code.slice(-1) !== ' ' &&
+  //   code.slice(-1) !== '\n'
+  // )
+  //   beforeStart = ' '
 
   // Break line or space after?
-  if (child.lineBreak) {
-    afterStart = '\n'
+  if (child.indent) {
     // Indent
-    afterStart += setIndent(indent)
-  } else if (child.type.includes('ejs')) {
-    inEJS = true
-    afterStart = ' '
+    indent++
   }
 
+  // // EJS
+  // if (child.type.includes('ejs')) {
+  //   inEJS = true
+  //   // afterStart = ' '
+  // }
+
   // Start
-  code += beforeStart + child.start + afterStart
+  code += beforeStart + child.identifier + afterStart
 
   // Tree children
   code += stringifyLoop(child, indent)
 
-  // Indent
-  if (child.type === 'block' || child.type === 'ejs') {
-    // Decrease indent
+  // // Space before?
+  // if (
+  //   child.end?.spaceBefore &&
+  //   code.length &&
+  //   code.slice(-1) !== ' ' &&
+  //   code.slice(-1) !== '\n'
+  // ) {
+  //   beforeEnd = ' '
+  // }
+
+  // Decrease indent
+  if (child.indent) {
     code = eatIndent(code)
     indent--
-
-    inEJS = false
   }
 
-  // Break line after?
-  if (child.lineBreak) {
-    afterEnd = '\n'
-    afterEnd += setIndent(indent)
-  }
+  // if (child.type.includes('ejs')) {
+  //   inEJS = false
+  // }
 
   // End
-  code += beforeEnd + child.end + afterEnd
+  code += beforeEnd + child.end.identifier + afterEnd
 
   return code
 }
 
+/**
+ * Stringify operators
+ * @param code Code
+ * @param child Child
+ * @returns Code
+ */
 const stringifyOperator = (code: string, child: Node): string => {
   let begin = ''
-  if (inEJS && code.slice(-1) !== ' ') begin = ''
-  if (!inEJS && child.type !== 'transpose' && code.slice(-1) !== ' ')
-    begin = ' '
+  // if (inEJS && code.slice(-1) !== ' ') begin = ' '
+  // if (!inEJS && child.type !== 'transpose' && code.slice(-1) !== ' ')
+  //   begin = ' '
 
+  code += begin + child.identifier
+
+  return code
+}
+
+/**
+ * Stringify comment
+ * @param code Code
+ * @param child Child
+ */
+const stringifyComment = (
+  code: string,
+  child: Node,
+  indent: number
+): string => {
+  if (child.type === 'inline') {
+    code += child.value
+  } else {
+    const comment = child.value
+    const lines = comment.split('\n')
+
+    lines.forEach((line, index) => {
+      code += line
+
+      if (index < line.length - 1) {
+        code += '\n'
+        if (index === lines.length - 2) {
+          code += setIndent(indent)
+        } else {
+          code += setIndent(indent + 1)
+        }
+      }
+    })
+  }
+
+  return code
+}
+
+/**
+ * Stringify line break
+ * @param code Code
+ * @param child Child
+ * @param indent Indent
+ * @returns Code
+ */
+const stringifyLineBreak = (
+  code: string,
+  child: Node,
+  indent: number
+): string => {
+  // if (
+  //   !(
+  //     child.left?.type === 'line_break' &&
+  //     child.left?.left?.type === 'line_break'
+  //   )
+  // ) {
+  // console.log(child?.left?.name)
+  // console.log(child?.left?.left?.name)
+  // console.log('--------------------------')
+  code += '\n'
+  code += setIndent(indent)
+  // }
+
+  return code
+}
+
+/**
+ * Stringify text
+ * @param code Code
+ * @param child Child
+ * @returns Code
+ */
+const stringifyText = (code: string, child: Node): string => {
+  let begin = ''
+  // if (
+  //   child.value !== ';' &&
+  //   code.length &&
+  //   code.slice(-1) !== ' ' &&
+  //   code.slice(-1) !== '\n' &&
+  //   code.slice(-1) !== "'"
+  // )
+  //   begin = ' '
   code += begin + child.value
+
+  return code
+}
+
+/**
+ * Stringify others
+ * @param code Code
+ * @param child Child
+ * @param indent Indent
+ * @returns
+ */
+const stringifyOthers = (code: string, child: Node, indent: number): string => {
+  if (child.type === 'line_break') {
+    code = stringifyLineBreak(code, child, indent)
+  } else if (child.type === 'space') {
+    code += ' '
+  } else {
+    code = stringifyText(code, child)
+  }
 
   return code
 }
@@ -119,28 +230,10 @@ const stringifyLoop = (tree: Tree, indent = 0): string => {
       code = stringifyBlock(code, child, indent)
     } else if (child.family === 'operators') {
       code = stringifyOperator(code, child)
+    } else if (child.family === 'comment') {
+      code = stringifyComment(code, child, indent)
     } else {
-      if (child.type === 'line_break') {
-        if (code.slice(-1) !== '') {
-          code += '\n'
-          for (let i = 0; i < indentLength * indent; ++i) {
-            code += ' '
-          }
-        }
-      } else if (child.type === 'space') {
-        code += ' '
-      } else {
-        let begin = ''
-        if (
-          child.value !== ';' &&
-          code.length &&
-          code.slice(-1) !== ' ' &&
-          code.slice(-1) !== '\n' &&
-          code.slice(-1) !== "'"
-        )
-          begin = ' '
-        code += begin + child.value
-      }
+      code = stringifyOthers(code, child, indent)
     }
   }
 
