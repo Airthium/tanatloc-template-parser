@@ -13,8 +13,8 @@ import {
  * Node interface
  */
 export interface Node extends Def {
-  family?: string
-  value?: string
+  family: string
+  value: string
   end?: Def
   children?: Node[]
   left?: Node
@@ -30,6 +30,8 @@ export interface Tree extends Node {}
 // Tree
 const tree: Tree = {
   ...root,
+  family: 'root',
+  value: '',
   parent: null
 }
 
@@ -139,6 +141,7 @@ const parseString = (text: string): boolean => {
       ...(currentNode.children || []),
       {
         ...string,
+        family: 'string',
         value: "'" + begin2 + "'",
         parent: currentNode
       }
@@ -173,8 +176,9 @@ const parseBlocks = (text: string): boolean => {
         currentNode.children = [
           ...(currentNode.children || []),
           {
-            family: 'blocks',
             ...block,
+            family: 'blocks',
+            value: block.identifier,
             parent: currentNode
           }
         ]
@@ -211,8 +215,9 @@ const parseOperators = (text: string): boolean => {
       currentNode.children = [
         ...(currentNode.children || []),
         {
-          family: 'operators',
           ...operator,
+          family: 'operators',
+          value: operator.identifier,
           parent: currentNode
         }
       ]
@@ -233,7 +238,7 @@ const parseOperators = (text: string): boolean => {
 const parseLoop = (text: string): void => {
   if (!text) return
 
-  text = text.trim()
+  // text = text.trim()
 
   if (
     !parseComment(text) && // Comments
@@ -249,6 +254,7 @@ const parseLoop = (text: string): void => {
       const value = values[i]
       if (value)
         children.push({
+          family: 'string',
           type: 'text',
           value,
           parent: currentNode
@@ -256,7 +262,9 @@ const parseLoop = (text: string): void => {
 
       if (i < values.length - 1)
         children.push({
+          family: 'string',
           type: 'space',
+          value: ' ',
           parent: currentNode
         })
     }
@@ -283,6 +291,8 @@ export const parse = (text: string): Tree => {
         ...(currentNode.children || []),
         {
           ...lineBreak,
+          family: 'string',
+          value: '\n',
           parent: currentNode
         }
       ]

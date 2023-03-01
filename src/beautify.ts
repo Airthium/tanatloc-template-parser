@@ -11,9 +11,30 @@ const setLeftAndRight = (node: Node): void => {
   })
 }
 
-// TODO manage directly the tree
+const traverseTree = (tree: Node): void => {
+  if (!tree.children) return
+
+  for (const child of tree.children) {
+    switch (child.family) {
+      case 'blocks':
+        break
+      case 'operators':
+        break
+      case 'comment':
+        break
+      case 'string':
+        break
+      default:
+        break
+    }
+  }
+}
 
 export const beautify = (tree: Tree): Tree => {
+  setLeftAndRight(tree)
+
+  traverseTree(tree)
+
   return tree
 }
 

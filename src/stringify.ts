@@ -51,11 +51,11 @@ const stringifyBlock = (code: string, child: Node, indent: number): string => {
   // )
   //   beforeStart = ' '
 
-  // Break line or space after?
-  if (child.indent) {
-    // Indent
-    indent++
-  }
+  // // Break line or space after?
+  // if (child.indent) {
+  //   // Indent
+  //   indent++
+  // }
 
   // // EJS
   // if (child.type.includes('ejs')) {
@@ -79,11 +79,11 @@ const stringifyBlock = (code: string, child: Node, indent: number): string => {
   //   beforeEnd = ' '
   // }
 
-  // Decrease indent
-  if (child.indent) {
-    code = eatIndent(code)
-    indent--
-  }
+  // // Decrease indent
+  // if (child.indent) {
+  //   code = eatIndent(code)
+  //   indent--
+  // }
 
   // if (child.type.includes('ejs')) {
   //   inEJS = false
@@ -133,11 +133,11 @@ const stringifyComment = (
 
       if (index < line.length - 1) {
         code += '\n'
-        if (index === lines.length - 2) {
-          code += setIndent(indent)
-        } else {
-          code += setIndent(indent + 1)
-        }
+        // if (index === lines.length - 2) {
+        //   code += setIndent(indent)
+        // } else {
+        //   code += setIndent(indent + 1)
+        // }
       }
     })
   }
@@ -167,7 +167,7 @@ const stringifyLineBreak = (
   // console.log(child?.left?.left?.name)
   // console.log('--------------------------')
   code += '\n'
-  code += setIndent(indent)
+  // code += setIndent(indent)
   // }
 
   return code
