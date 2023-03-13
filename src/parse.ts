@@ -6,6 +6,7 @@ import {
   multilineComment,
   operators,
   root,
+  space,
   string
 } from './defs.js'
 
@@ -13,9 +14,8 @@ import {
  * Node interface
  */
 export interface Node extends Def {
-  family: string
   value: string
-  end?: Def
+  end?: Node
   children?: Node[]
   left?: Node
   right?: Node
@@ -30,7 +30,6 @@ export interface Tree extends Node {}
 // Tree
 const tree: Tree = {
   ...root,
-  family: 'root',
   value: '',
   parent: null
 }
@@ -54,10 +53,22 @@ const parseComment = (text: string): boolean => {
   if (inComment) {
     if (text.includes(multilineComment[1].identifier)) {
       const pos = text.indexOf(multilineComment[1].identifier)
-      const begin = text.slice(0, pos + multilineComment[1].identifier.length)
+      const begin = text.slice(0, pos)
       const end = text.slice(pos + multilineComment[1].identifier.length)
 
-      currentNode.value += begin
+      currentNode.children = [
+        ...(currentNode.children || []),
+        {
+          ...string,
+          value: begin,
+          parent: currentNode
+        },
+        {
+          ...multilineComment[1],
+          value: multilineComment[1].identifier,
+          parent: currentNode
+        }
+      ]
       currentNode = currentNode.parent
 
       inComment = false
@@ -66,7 +77,14 @@ const parseComment = (text: string): boolean => {
 
       return true
     } else {
-      currentNode.value += text
+      currentNode.children = [
+        ...(currentNode.children || []),
+        {
+          ...string,
+          value: text,
+          parent: currentNode
+        }
+      ]
 
       return true
     }
@@ -76,21 +94,27 @@ const parseComment = (text: string): boolean => {
   if (text.includes(multilineComment[0].identifier)) {
     const pos = text.indexOf(multilineComment[0].identifier)
     const begin = text.slice(0, pos)
-    const end = text.slice(pos)
+    const end = text.slice(pos + multilineComment[0].identifier.length)
 
     parseLoop(begin)
 
     currentNode.children = [
       ...(currentNode.children || []),
       {
-        family: 'comment',
         ...multilineComment[0],
-        value: end,
+        value: multilineComment[0].identifier,
         parent: currentNode
       }
     ]
 
     currentNode = currentNode.children[currentNode.children.length - 1]
+    currentNode.children = [
+      {
+        ...string,
+        value: end,
+        parent: currentNode
+      }
+    ]
     inComment = true
 
     return true
@@ -107,7 +131,6 @@ const parseComment = (text: string): boolean => {
     currentNode.children = [
       ...(currentNode.children || []),
       {
-        family: 'comment',
         ...inlineComment,
         value: end,
         parent: currentNode
@@ -141,7 +164,6 @@ const parseString = (text: string): boolean => {
       ...(currentNode.children || []),
       {
         ...string,
-        family: 'string',
         value: "'" + begin2 + "'",
         parent: currentNode
       }
@@ -177,7 +199,6 @@ const parseBlocks = (text: string): boolean => {
           ...(currentNode.children || []),
           {
             ...block,
-            family: 'blocks',
             value: block.identifier,
             parent: currentNode
           }
@@ -185,7 +206,14 @@ const parseBlocks = (text: string): boolean => {
 
         currentNode = currentNode.children[currentNode.children.length - 1]
       } else {
-        currentNode.end = block
+        currentNode.children = [
+          ...(currentNode.children || []),
+          {
+            ...block,
+            value: block.identifier,
+            parent: currentNode.parent
+          }
+        ]
         currentNode = currentNode.parent ?? tree
       }
 
@@ -216,7 +244,6 @@ const parseOperators = (text: string): boolean => {
         ...(currentNode.children || []),
         {
           ...operator,
-          family: 'operators',
           value: operator.identifier,
           parent: currentNode
         }
@@ -238,7 +265,7 @@ const parseOperators = (text: string): boolean => {
 const parseLoop = (text: string): void => {
   if (!text) return
 
-  // text = text.trim()
+  text = text.trim()
 
   if (
     !parseComment(text) && // Comments
@@ -254,17 +281,15 @@ const parseLoop = (text: string): void => {
       const value = values[i]
       if (value)
         children.push({
-          family: 'string',
-          type: 'text',
+          ...string,
           value,
           parent: currentNode
         })
 
       if (i < values.length - 1)
         children.push({
-          family: 'string',
-          type: 'space',
-          value: ' ',
+          ...space,
+          value: space.identifier,
           parent: currentNode
         })
     }
@@ -279,24 +304,20 @@ const parseLoop = (text: string): void => {
  * @returns Tree
  */
 export const parse = (text: string): Tree => {
+  // Split
   const lines = text.split('\n')
 
   // Loop over lines
   lines.forEach((line) => {
     parseLoop(line)
-    if (inComment) {
-      currentNode.value += '\n'
-    } else {
-      currentNode.children = [
-        ...(currentNode.children || []),
-        {
-          ...lineBreak,
-          family: 'string',
-          value: '\n',
-          parent: currentNode
-        }
-      ]
-    }
+    currentNode.children = [
+      ...(currentNode.children || []),
+      {
+        ...lineBreak,
+        value: lineBreak.identifier,
+        parent: currentNode
+      }
+    ]
   })
 
   return tree
