@@ -1,6 +1,12 @@
 import { lineBreak, multilineComment, space } from './defs.js'
 import { Node, Tree } from './parse.js'
 
+export interface NodeLR extends Node {
+  left?: WeakRef<NodeLR>
+  right?: WeakRef<NodeLR>
+  children?: NodeLR[]
+}
+
 // Indent length
 const indentLength = 4
 
@@ -13,20 +19,25 @@ let currentIndent = 0
 // Current indent (EJS)
 let currentEJSIndent = 0
 
+// Indent in problem
+let indentInProblem = false
+
 /**
  * Set left and right
  * @param node Node
  */
-const setLeftAndRight = (node: Node): void => {
+const setLeftAndRight = (node: NodeLR): void => {
   node.children?.forEach((child, index) => {
-    child.left = node.children[index - 1]
-    child.right = node.children[index + 1]
+    const left = node.children[index - 1]
+    const right = node.children[index + 1]
+    child.left = left ? new WeakRef(left) : undefined
+    child.right = right ? new WeakRef(right) : undefined
 
     setLeftAndRight(child)
   })
 }
 
-export const setIndent = (parent: Node, lineBreak: Node): void => {
+export const setIndent = (parent: NodeLR, lineBreak: NodeLR): void => {
   const index = parent.children.findIndex((c) => c === lineBreak)
   if (index === -1) return
 
@@ -34,7 +45,7 @@ export const setIndent = (parent: Node, lineBreak: Node): void => {
     (inEJS ? currentEJSIndent : currentIndent) * indentLength
 
   // Indents
-  const indents = []
+  const indents: NodeLR[] = []
   for (let i = 0; i < numberOfSpaces; ++i) {
     const indent = {
       ...space,
@@ -46,8 +57,14 @@ export const setIndent = (parent: Node, lineBreak: Node): void => {
 
   // Left right
   for (let i = 0; i < numberOfSpaces; ++i) {
-    indents[i].left = indents[i - 1]?.left ?? lineBreak
-    indents[i].right = indents[i + 1]?.right ?? parent.children[index + 1]
+    indents[i].left =
+      indents[i - 1] ?? lineBreak
+        ? new WeakRef(indents[i - 1] ?? lineBreak)
+        : undefined
+    indents[i].right =
+      indents[i + 1] ?? parent.children[index + 1]
+        ? new WeakRef(indents[i + 1] ?? parent.children[index + 1])
+        : undefined
   }
 
   // Append
@@ -56,7 +73,7 @@ export const setIndent = (parent: Node, lineBreak: Node): void => {
   }
 }
 
-export const eatIndent = (parent: Node, child: Node): void => {
+export const eatIndent = (parent: NodeLR, child: NodeLR): void => {
   const index = parent.children.findIndex((c) => c === child)
   if (index === -1) return
 
@@ -70,7 +87,7 @@ export const eatIndent = (parent: Node, child: Node): void => {
   if (ok) for (let i = 0; i < numberOfSpaces; ++i) removeLeft(parent, child)
 }
 
-export const eatLineIndent = (parent: Node): void => {
+export const eatLineIndent = (parent: NodeLR): void => {
   //@ts-ignore
   const child = parent.children.findLast((c) => c.type === 'line_break')
   const index = parent.children.findIndex((c) => c === child)
@@ -93,12 +110,12 @@ export const eatLineIndent = (parent: Node): void => {
  * @param leftChild Left child
  */
 export const appendLeft = (
-  parent: Node,
-  child: Node,
+  parent: NodeLR,
+  child: NodeLR,
   leftChild: Node
 ): void => {
   const left = child.left
-  child.left = leftChild
+  child.left = new WeakRef(leftChild)
 
   const index = parent.children.findIndex((c) => c === child)
   if (index == -1) return
@@ -108,17 +125,17 @@ export const appendLeft = (
     {
       ...leftChild,
       left: left,
-      right: child
+      right: new WeakRef(child)
     },
     ...parent.children.slice(index)
   ]
 }
 
-export const removeLeft = (parent: Node, child: Node): void => {
+export const removeLeft = (parent: NodeLR, child: NodeLR): void => {
   const index = parent.children.findIndex((c) => c === child)
   if (index === -1) return
 
-  child.left = parent.children[index - 2]
+  child.left = new WeakRef(parent.children[index - 2])
 
   parent.children = [
     ...parent.children.slice(0, index - 1),
@@ -133,12 +150,12 @@ export const removeLeft = (parent: Node, child: Node): void => {
  * @param rightChild Right child
  */
 export const appendRight = (
-  parent: Node,
-  child: Node,
+  parent: NodeLR,
+  child: NodeLR,
   rightChild: Node
 ): void => {
   const right = child.right
-  child.right = rightChild
+  child.right = new WeakRef(rightChild)
 
   const index = parent.children.findIndex((c) => c === child)
   if (index == -1) return
@@ -147,18 +164,18 @@ export const appendRight = (
     ...parent.children.slice(0, index + 1),
     {
       ...rightChild,
-      left: child,
+      left: new WeakRef(child),
       right: right
     },
     ...parent.children.slice(index + 1)
   ]
 }
 
-export const removeRight = (parent: Node, child: Node): void => {
+export const removeRight = (parent: NodeLR, child: NodeLR): void => {
   const index = parent.children.findIndex((c) => c === child)
   if (index === -1) return
 
-  child.right = parent.children[index + 2]
+  child.right = new WeakRef(parent.children[index + 2])
 
   parent.children = [
     ...parent.children.slice(0, index),
@@ -166,12 +183,12 @@ export const removeRight = (parent: Node, child: Node): void => {
   ]
 }
 
-export const removeSelf = (parent: Node, child: Node): void => {
+export const removeSelf = (parent: NodeLR, child: NodeLR): void => {
   const index = parent.children.findIndex((c) => c === child)
   if (index === -1) return
 
-  parent.children[index - 1].right = parent.children[index + 1]
-  parent.children[index + 1].left = parent.children[index - 1]
+  parent.children[index - 1].right = new WeakRef(parent.children[index + 1])
+  parent.children[index + 1].left = new WeakRef(parent.children[index - 1])
 
   parent.children = [
     ...parent.children.slice(0, index),
@@ -179,18 +196,20 @@ export const removeSelf = (parent: Node, child: Node): void => {
   ]
 }
 
-export const beautifyBlock = (parent: Node, child: Node): void => {
-  if (child.dir === 1) {
+export const beautifyBlock = (parent: NodeLR, child: NodeLR): void => {
+  if (child.dir > 0) {
     if (child.enableEJS) {
-      eatIndent(parent, child)
+      for (let i = 0; i < currentIndent; ++i) eatIndent(parent, child)
       inEJS = true
-      currentEJSIndent++
+      if (child.indentEJS) currentEJSIndent += child.dir
+    } else if (inEJS) {
+      if (child.indentEJS) currentEJSIndent += child.dir
     } else {
-      currentIndent++
+      currentIndent += child.dir
     }
 
     if (child.spaceBefore) {
-      const left = child.left
+      const left = child.left?.deref()
       if (left && (left.type == 'string' || left.family === 'block')) {
         const leftChild = {
           ...space,
@@ -203,43 +222,49 @@ export const beautifyBlock = (parent: Node, child: Node): void => {
     }
 
     if (child.spaceAfter) {
-      const right = child.right
-      if (right && right.type !== 'space') {
-        const rightChild = {
-          ...space,
-          value: space.identifier,
-          parent: parent
-        }
-
-        appendRight(parent, child, rightChild)
+      const leftChild = {
+        ...space,
+        value: space.identifier,
+        parent: parent
       }
+      appendLeft(child, child.children[0], leftChild)
     }
 
     if (child.lineBreakAfter) {
       if (child.children[0].type !== 'line_break') {
-        const firstChild = {
+        const leftChild = {
           ...lineBreak,
           value: lineBreak.identifier,
-          right: child.children[0],
+          right: new WeakRef(child.children[0]),
           parent: child
         }
-        child.children = [firstChild, ...child.children]
+        appendLeft(child, child.children[0], leftChild)
       }
     }
 
     traverseTree(child)
   } else {
     if (child.disableEJS) {
+      for (let i = 0; i < currentEJSIndent; ++i) eatIndent(parent, child)
+
       inEJS = false
-      currentEJSIndent--
+      if (child.indentEJS) currentEJSIndent += child.dir
+      if (!child.indentEJS && parent.indentEJS) currentEJSIndent += child.dir
+    } else if (inEJS) {
+      eatIndent(parent, child)
+      if (child.indentEJS) currentEJSIndent += child.dir
     } else {
-      currentIndent--
+      eatIndent(parent, child)
+      currentIndent += child.dir
     }
-    eatIndent(parent, child)
 
     if (child.spaceBefore) {
-      const left = child.left
-      if (left?.type !== 'space' && left?.type !== 'line_break') {
+      const left = child.left?.deref()
+      if (
+        !left?.indentEJS &&
+        left?.type !== 'space' &&
+        left?.type !== 'line_break'
+      ) {
         const leftChild = {
           ...space,
           value: space.identifier,
@@ -254,21 +279,37 @@ export const beautifyBlock = (parent: Node, child: Node): void => {
       // TODO
     }
 
+    const right = parent.right?.deref()
+    if (right?.value === 'catch' || right?.value === 'else') {
+      const rightChild = {
+        ...space,
+        value: space.identifier,
+        parent: parent
+      }
+      appendRight(parent, child, rightChild)
+    }
+
     if (child.lineBreakAfter) {
-      // const rightChild = {
-      //   ...lineBreak,
-      //   value: lineBreak.identifier,
-      //   parent: parent
-      // }
-      // appendRight(parent, child, rightChild)
-      // setIndent(parent, rightChild)
+      if (
+        right?.type !== 'line_break' &&
+        right?.value !== 'catch' &&
+        right?.value !== 'else'
+      ) {
+        const rightChild = {
+          ...lineBreak,
+          value: lineBreak.identifier,
+          parent: parent
+        }
+        appendRight(parent, child, rightChild)
+        //indent
+      }
     }
   }
 }
 
-export const beautifyOperator = (parent: Node, child: Node): void => {
+export const beautifyOperator = (parent: NodeLR, child: NodeLR): void => {
   if (child.spaceBefore) {
-    const left = child.left
+    const left = child.left?.deref()
     if (
       left?.type !== 'space' &&
       left?.type !== 'line_break' &&
@@ -284,7 +325,7 @@ export const beautifyOperator = (parent: Node, child: Node): void => {
   }
 
   if (child.spaceAfter) {
-    const right = child.right
+    const right = child.right?.deref()
     if (right?.type !== 'space' && right?.type !== 'line_break') {
       const rightChild = {
         ...space,
@@ -295,9 +336,14 @@ export const beautifyOperator = (parent: Node, child: Node): void => {
       appendRight(parent, child, rightChild)
     }
   }
+
+  if (child.value === ';' && indentInProblem) {
+    indentInProblem = false
+    currentIndent--
+  }
 }
 
-export const beautifyComment = (_: Node, child: Node): void => {
+export const beautifyComment = (_: NodeLR, child: NodeLR): void => {
   if (child.type === 'inline') {
     const comment = child.value.substring(2).trim().replace(/\s\s+/g, ' ')
     child.value = '// ' + comment
@@ -315,18 +361,41 @@ export const beautifyComment = (_: Node, child: Node): void => {
   }
 }
 
-export const beautifyString = (parent: Node, child: Node): void => {
+export const beautifyString = (parent: NodeLR, child: NodeLR): void => {
   if (child.type === 'line_break') {
     if (
-      child.right?.type === 'line_break' &&
-      child.right?.right?.type === 'line_break'
+      child.right?.deref().type === 'line_break' &&
+      child.right?.deref().right?.deref().type === 'line_break'
     )
       removeSelf(parent, child)
     else setIndent(parent, child)
   }
+
+  if (
+    child.value === 'for' ||
+    child.value === 'if' ||
+    child.value === 'catch'
+  ) {
+    const rightChild = {
+      ...space,
+      value: space.identifier,
+      parent: parent
+    }
+
+    appendRight(parent, child, rightChild)
+  }
+
+  if (
+    child.value === 'solve' ||
+    child.value === 'problem' ||
+    child.value === 'varf'
+  ) {
+    indentInProblem = true
+    currentIndent++
+  }
 }
 
-const traverseTree = (tree: Node): void => {
+const traverseTree = (tree: NodeLR): void => {
   if (!tree.children) return
 
   for (const child of tree.children) {
@@ -351,6 +420,7 @@ const traverseTree = (tree: Node): void => {
 
 export const beautify = (tree: Tree): Tree => {
   setLeftAndRight(tree)
+  // console.dir(tree, { depth: null })
 
   traverseTree(tree)
 

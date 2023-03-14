@@ -17,8 +17,6 @@ export interface Node extends Def {
   value: string
   end?: Node
   children?: Node[]
-  left?: Node
-  right?: Node
   parent: Node
 }
 

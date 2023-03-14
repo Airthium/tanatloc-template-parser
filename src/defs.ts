@@ -3,13 +3,14 @@ export interface Def {
   name: string
   identifier: string
   type?: string
-  dir?: -1 | 1
+  dir?: -2 | -1 | 1
   spaceBefore?: true
   spaceAfter?: true
   lineBreakBefore?: true
   lineBreakAfter?: true
   enableEJS?: true
   disableEJS?: true
+  indentEJS?: true
 }
 
 export const root: Def = {
@@ -66,12 +67,20 @@ export const lineBreak: Def = {
 export const blocks: Def[] = [
   {
     family: 'block',
+    name: 'blockParenthesisClose',
+    identifier: '})',
+    dir: -1,
+    indentEJS: true
+  },
+  {
+    family: 'block',
     name: 'blockOpen',
     identifier: '{',
     type: 'block',
     dir: 1,
     spaceBefore: true,
-    lineBreakAfter: true
+    lineBreakAfter: true,
+    indentEJS: true
   },
   {
     family: 'block',
@@ -79,7 +88,8 @@ export const blocks: Def[] = [
     identifier: '}',
     dir: -1,
     lineBreakBefore: true,
-    lineBreakAfter: true
+    lineBreakAfter: true,
+    indentEJS: true
   },
   {
     family: 'block',
@@ -141,7 +151,8 @@ export const blocks: Def[] = [
     type: 'ejs',
     dir: 1,
     lineBreakAfter: true,
-    enableEJS: true
+    enableEJS: true,
+    indentEJS: true
   },
   {
     family: 'block',
@@ -165,6 +176,13 @@ export const blocks: Def[] = [
 export const operators: Def[] = [
   {
     family: 'operator',
+    name: 'pow-1',
+    identifier: '^-1',
+    type: 'pow-1',
+    spaceAfter: true
+  },
+  {
+    family: 'operator',
     name: 'streamIn',
     identifier: '<<',
     type: 'stream_in',
@@ -185,6 +203,22 @@ export const operators: Def[] = [
   },
   {
     family: 'operator',
+    name: 'equalEqual',
+    identifier: '==',
+    type: 'equal_equal',
+    spaceBefore: true,
+    spaceAfter: true
+  },
+  {
+    family: 'operator',
+    name: 'notEqual',
+    identifier: '!=',
+    type: 'not_equal',
+    spaceBefore: true,
+    spaceAfter: true
+  },
+  {
+    family: 'operator',
     name: 'plusEqual',
     identifier: '+=',
     type: 'plus_equal',
@@ -196,6 +230,14 @@ export const operators: Def[] = [
     name: 'minusEqual',
     identifier: '-=',
     type: 'minus_equal',
+    spaceBefore: true,
+    spaceAfter: true
+  },
+  {
+    family: 'operator',
+    name: 'test',
+    identifier: '??',
+    type: 'test',
     spaceBefore: true,
     spaceAfter: true
   },

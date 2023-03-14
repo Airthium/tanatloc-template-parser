@@ -2,7 +2,7 @@ try{
 real i=0;
   { int j = 1;
       real value = int1d(Th)(Ux* Uy);
-    } varf problem ([Ux, Uy], [Uhy, Uhy])
+    } varf myProblem ([Ux, Uy], [Uhy, Uhy])
       = int2d(Th)(
         grad(U)' * grad(Uh));
   
@@ -17,6 +17,14 @@ real i=0;
     Some multiline
       comment
     */
+
+    if (i == 0) {
+      cout << "i = 0" << endl;
+    } else if (i != 1) {
+      cout << "i != 1" << endl;
+    } else {
+      cout << "i unknown" << endl;
+    }
       
     <%# EJS COMMENT-%>
   
