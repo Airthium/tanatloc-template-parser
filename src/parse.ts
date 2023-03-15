@@ -2,12 +2,13 @@ import {
   blocks,
   Def,
   inlineComment,
+  keywords,
   lineBreak,
   multilineComment,
   operators,
   root,
-  space,
-  string
+  string,
+  types
 } from './defs.js'
 
 /**
@@ -15,7 +16,7 @@ import {
  */
 export interface Node extends Def {
   value: string
-  end?: Node
+  isInline?: boolean
   children?: Node[]
   parent: Node
 }
@@ -35,11 +36,83 @@ const tree: Tree = {
 // Current node
 let currentNode = tree
 
-// In comment?
-let inComment = false
+// In multline comment?
+let inMultilineComment = false
 
 // In EJS?
 let inEJS = false
+
+/**
+ * Append child
+ * @param node Node
+ * @param child Child
+ */
+const appendChild = (node: Node, child: Omit<Node, 'parent'>): void => {
+  node.children = [...(node.children || []), { ...child, parent: node }]
+}
+
+/**
+ * Parse inline comment
+ * @param text Text
+ */
+const parseInlineComment = (text: string): void => {
+  const pos = text.indexOf('//')
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos)
+
+  parseLoop(begin)
+
+  appendChild(currentNode, { ...inlineComment, value: end })
+}
+
+/**
+ * Parse multline comment open
+ * @param text Text
+ */
+const parseMultlineCommentOpen = (text: string): void => {
+  const openBlock = multilineComment[0]
+  const open = openBlock.identifier
+
+  const pos = text.indexOf(open)
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos + open.length)
+
+  parseLoop(begin)
+
+  // Append multiline block
+  appendChild(currentNode, { ...openBlock, value: open })
+
+  // Go in multiline comment block
+  currentNode = currentNode.children[currentNode.children.length - 1]
+  inMultilineComment = true
+
+  // Append current text
+  appendChild(currentNode, { ...string, value: end })
+}
+
+/**
+ * Parse multline comment close
+ * @param text Text
+ */
+const parseMultlineCommentClose = (text: string): void => {
+  const closeBlock = multilineComment[1]
+  const close = closeBlock.identifier
+
+  const pos = text.indexOf(close)
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos + close.length)
+
+  // Append text
+  appendChild(currentNode, { ...string, value: begin })
+  // Append end
+  appendChild(currentNode, { ...closeBlock, value: close })
+
+  // Get out of multiline comment block
+  currentNode = currentNode.parent
+  inMultilineComment = false
+
+  parseLoop(end)
+}
 
 /**
  * Parse comment
@@ -47,93 +120,61 @@ let inEJS = false
  * @returns Parsed?
  */
 const parseComment = (text: string): boolean => {
-  // Comments
-  if (inComment) {
-    if (text.includes(multilineComment[1].identifier)) {
-      const pos = text.indexOf(multilineComment[1].identifier)
-      const begin = text.slice(0, pos)
-      const end = text.slice(pos + multilineComment[1].identifier.length)
+  // Inline comment
+  if (text.includes('//')) {
+    parseInlineComment(text)
+    return true
+  }
 
-      currentNode.children = [
-        ...(currentNode.children || []),
-        {
-          ...string,
-          value: begin,
-          parent: currentNode
-        },
-        {
-          ...multilineComment[1],
-          value: multilineComment[1].identifier,
-          parent: currentNode
-        }
-      ]
-      currentNode = currentNode.parent
-
-      inComment = false
-
-      parseLoop(end)
-
+  // Multiline comments
+  const open = multilineComment[0].identifier
+  const close = multilineComment[1].identifier
+  if (inMultilineComment) {
+    if (text.includes(close)) {
+      parseMultlineCommentClose(text)
       return true
     } else {
-      currentNode.children = [
-        ...(currentNode.children || []),
-        {
-          ...string,
-          value: text,
-          parent: currentNode
-        }
-      ]
-
+      appendChild(currentNode, {
+        ...string,
+        value: text
+      })
+      return true
+    }
+  } else {
+    // Multiline comment
+    if (text.includes(open)) {
+      parseMultlineCommentOpen(text)
       return true
     }
   }
 
-  // Multiline comment
-  if (text.includes(multilineComment[0].identifier)) {
-    const pos = text.indexOf(multilineComment[0].identifier)
+  return false
+}
+
+/**
+ * Parse EJS string
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseEJSString = (text: string): boolean => {
+  // Do not consider ' as an operator in EJS
+  if (inEJS && text.includes("'")) {
+    let pos = text.indexOf("'")
     const begin = text.slice(0, pos)
-    const end = text.slice(pos + multilineComment[0].identifier.length)
+    const inString = text.slice(pos + 1)
 
     parseLoop(begin)
 
-    currentNode.children = [
-      ...(currentNode.children || []),
-      {
-        ...multilineComment[0],
-        value: multilineComment[0].identifier,
-        parent: currentNode
-      }
-    ]
+    pos = inString.indexOf("'")
+    const stringContent = inString.slice(0, pos)
+    const end = inString.slice(pos + 1)
 
-    currentNode = currentNode.children[currentNode.children.length - 1]
-    currentNode.children = [
-      {
-        ...string,
-        value: end,
-        parent: currentNode
-      }
-    ]
-    inComment = true
+    appendChild(currentNode, {
+      ...string,
+      value: "'" + stringContent + "'"
+    })
 
-    return true
-  }
-
-  // Inline comment
-  if (text.includes('//')) {
-    const pos = text.indexOf('//')
-    const begin = text.slice(0, pos)
-    const end = text.slice(pos)
-
-    parseLoop(begin)
-
-    currentNode.children = [
-      ...(currentNode.children || []),
-      {
-        ...inlineComment,
-        value: end,
-        parent: currentNode
-      }
-    ]
+    parseLoop(end)
 
     return true
   }
@@ -142,37 +183,94 @@ const parseComment = (text: string): boolean => {
 }
 
 /**
- * Parse string
+ * Parse type
  * @param text Text
  * @returns Parsed?
  */
-const parseString = (text: string): boolean => {
-  if (inEJS && text.includes("'")) {
-    const pos = text.indexOf("'")
-    const begin = text.slice(0, pos)
-    const end = text.slice(pos + 1)
+const parseType = (text: string): boolean => {
+  const words = text.split(' ')
+  for (const type of types) {
+    if (words.includes(type)) {
+      const index = words.indexOf(type)
+      const begin = words.slice(0, index).join(' ')
+      const end = words.slice(index + 1).join(' ')
 
-    parseLoop(begin)
+      parseLoop(begin)
 
-    const pos2 = end.indexOf("'")
-    const begin2 = end.slice(0, pos2)
-    const end2 = end.slice(pos2 + 1)
-
-    currentNode.children = [
-      ...(currentNode.children || []),
-      {
+      appendChild(currentNode, {
         ...string,
-        value: "'" + begin2 + "'",
-        parent: currentNode
-      }
-    ]
+        name: 'type',
+        value: type
+      })
 
-    parseLoop(end2)
+      parseLoop(end)
 
-    return true
+      return true
+    }
   }
 
   return false
+}
+
+/**
+ * Parse keyword
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseKeyword = (text: string): boolean => {
+  const words = text.split(' ')
+  for (const keyword of keywords) {
+    if (words.includes(keyword)) {
+      const index = words.indexOf(keyword)
+      const begin = words.slice(0, index).join(' ')
+      const end = words.slice(index + 1).join(' ')
+
+      parseLoop(begin)
+
+      appendChild(currentNode, { ...string, name: 'keyword', value: keyword })
+
+      parseLoop(end)
+
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Parse block open
+ * @param block Block def
+ * @param text Text
+ */
+const parseBlockOpen = (block: Def, text: string): void => {
+  // Check inline
+  let inline = false
+  const numberOfOpens = text.split(block.identifier).length - 1
+  block.closeIdentifiers.forEach((closeIdentifier) => {
+    const numberOfCloses = text.split(closeIdentifier).length - 1
+    if (numberOfCloses > numberOfOpens) inline = true
+  })
+
+  // Append block
+  appendChild(currentNode, {
+    ...block,
+    value: block.identifier,
+    isInline: inline
+  })
+  // Go in block
+  currentNode = currentNode.children[currentNode.children.length - 1]
+}
+
+/**
+ * Parse block close
+ * @param block Block def
+ */
+const parseBlockClose = (block: Def): void => {
+  // Append end
+  appendChild(currentNode, { ...block, value: block.identifier })
+  // Get out of block
+  currentNode = currentNode.parent
 }
 
 /**
@@ -180,7 +278,7 @@ const parseString = (text: string): boolean => {
  * @param text Text
  * @returns Parsed?
  */
-const parseBlocks = (text: string): boolean => {
+const parseBlock = (text: string): boolean => {
   for (const block of blocks) {
     if (text.includes(block.identifier)) {
       const pos = text.indexOf(block.identifier)
@@ -193,26 +291,9 @@ const parseBlocks = (text: string): boolean => {
       if (block.disableEJS) inEJS = false
 
       if (block.dir === 1) {
-        currentNode.children = [
-          ...(currentNode.children || []),
-          {
-            ...block,
-            value: block.identifier,
-            parent: currentNode
-          }
-        ]
-
-        currentNode = currentNode.children[currentNode.children.length - 1]
+        parseBlockOpen(block, end)
       } else {
-        currentNode.children = [
-          ...(currentNode.children || []),
-          {
-            ...block,
-            value: block.identifier,
-            parent: currentNode.parent
-          }
-        ]
-        currentNode = currentNode.parent ?? tree
+        parseBlockClose(block)
       }
 
       parseLoop(end)
@@ -229,7 +310,7 @@ const parseBlocks = (text: string): boolean => {
  * @param text Text
  * @returns Parsed?
  */
-const parseOperators = (text: string): boolean => {
+const parseOperator = (text: string): boolean => {
   for (const operator of operators) {
     if (text.includes(operator.identifier)) {
       const pos = text.indexOf(operator.identifier)
@@ -238,14 +319,7 @@ const parseOperators = (text: string): boolean => {
 
       parseLoop(begin)
 
-      currentNode.children = [
-        ...(currentNode.children || []),
-        {
-          ...operator,
-          value: operator.identifier,
-          parent: currentNode
-        }
-      ]
+      appendChild(currentNode, { ...operator, value: operator.identifier })
 
       parseLoop(end)
 
@@ -267,27 +341,21 @@ const parseLoop = (text: string): void => {
 
   if (
     !parseComment(text) && // Comments
-    !parseString(text) && // String
-    !parseBlocks(text) && // Blocks
-    !parseOperators(text) // Operators
+    !parseEJSString(text) && // String
+    !parseType(text) && // Types
+    !parseKeyword(text) && // Keyword
+    !parseBlock(text) && // Blocks
+    !parseOperator(text) // Operators
   ) {
     // Rest
     const values = text.split(' ')
     const children = []
 
-    for (let i = 0; i < values.length; ++i) {
-      const value = values[i]
+    for (const value of values) {
       if (value)
         children.push({
           ...string,
           value,
-          parent: currentNode
-        })
-
-      if (i < values.length - 1)
-        children.push({
-          ...space,
-          value: space.identifier,
           parent: currentNode
         })
     }

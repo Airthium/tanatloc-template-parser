@@ -1,43 +1,49 @@
-export interface Def {
-  family: 'root' | 'comment' | 'string' | 'block' | 'operator'
-  name: string
-  identifier: string
-  type?: string
-  dir?: -2 | -1 | 1
+export interface BeautifierParams {
   spaceBefore?: true
   spaceAfter?: true
   lineBreakBefore?: true
   lineBreakAfter?: true
+  indent?: true
+  keepInline?: true
+  skip?: true
+}
+
+export type Families = 'root' | 'comment' | 'string' | 'block' | 'operator'
+
+export interface Def {
+  family: Families
+  name: string
+  identifier: string
+  closeIdentifiers?: string[]
+  dir?: -1 | 1
+  freefem?: BeautifierParams
+  ejs?: BeautifierParams
   enableEJS?: true
   disableEJS?: true
-  indentEJS?: true
 }
 
 export const root: Def = {
   family: 'root',
   name: 'root',
-  identifier: '',
-  type: 'root'
+  identifier: ''
 }
 
 export const inlineComment: Def = {
   family: 'comment',
   name: 'inline',
-  identifier: '//',
-  type: 'inline'
+  identifier: '//'
 }
 
 export const multilineComment: Def[] = [
   {
     family: 'comment',
-    name: 'multilineOpen',
+    name: 'multiline',
     identifier: '/*',
-    type: 'multiline',
     dir: 1
   },
   {
     family: 'comment',
-    name: 'multilineClose',
+    name: 'multiline',
     identifier: '*/',
     dir: -1
   }
@@ -45,71 +51,100 @@ export const multilineComment: Def[] = [
 
 export const string: Def = {
   family: 'string',
-  name: 'string',
-  identifier: '',
-  type: 'string'
+  name: 'text',
+  identifier: ''
 }
 
 export const space: Def = {
   family: 'string',
   name: 'space',
-  identifier: ' ',
-  type: 'space'
+  identifier: ' '
 }
 
 export const lineBreak: Def = {
   family: 'string',
   name: 'lineBreak',
-  identifier: '\n',
-  type: 'line_break'
+  identifier: '\n'
 }
 
 export const blocks: Def[] = [
   {
     family: 'block',
-    name: 'blockParenthesisClose',
+    name: 'braceParenthesis',
     identifier: '})',
-    dir: -1,
-    indentEJS: true
-  },
-  {
-    family: 'block',
-    name: 'blockOpen',
-    identifier: '{',
-    type: 'block',
-    dir: 1,
-    spaceBefore: true,
-    lineBreakAfter: true,
-    indentEJS: true
-  },
-  {
-    family: 'block',
-    name: 'blockClose',
-    identifier: '}',
-    dir: -1,
-    lineBreakBefore: true,
-    lineBreakAfter: true,
-    indentEJS: true
-  },
-  {
-    family: 'block',
-    name: 'arrayOpen',
-    identifier: '[',
-    type: 'array',
-    dir: 1
-  },
-  {
-    family: 'block',
-    name: 'arrayClose',
-    identifier: ']',
     dir: -1
   },
   {
     family: 'block',
-    name: 'parenthesisOpen',
+    name: 'brace',
+    identifier: '{',
+    closeIdentifiers: ['}'],
+    dir: 1,
+    freefem: {
+      spaceBefore: true,
+      lineBreakAfter: true,
+      indent: true,
+      keepInline: true
+    },
+    ejs: {
+      indent: true,
+      keepInline: true
+    }
+  },
+  {
+    family: 'block',
+    name: 'brace',
+    identifier: '}',
+    dir: -1,
+    freefem: {
+      spaceBefore: true,
+      lineBreakBefore: true,
+      lineBreakAfter: true,
+      keepInline: true
+    },
+    ejs: {
+      keepInline: true
+    }
+  },
+  {
+    family: 'block',
+    name: 'array',
+    identifier: '[',
+    closeIdentifiers: [']'],
+    dir: 1,
+    freefem: {
+      spaceAfter: true,
+      indent: true,
+      keepInline: true
+    },
+    ejs: {
+      keepInline: true
+    }
+  },
+  {
+    family: 'block',
+    name: 'array',
+    identifier: ']',
+    dir: -1,
+    freefem: {
+      spaceBefore: true,
+      indent: true,
+      keepInline: true
+    },
+    ejs: {
+      keepInline: true
+    }
+  },
+  {
+    family: 'block',
+    name: 'parenthesis',
     identifier: '(',
-    type: 'parenthesis',
-    dir: 1
+    closeIdentifiers: [')'],
+    dir: 1,
+    freefem: {
+      indent: true,
+      keepInline: true
+    }
   },
   {
     family: 'block',
@@ -119,47 +154,59 @@ export const blocks: Def[] = [
   },
   {
     family: 'block',
-    name: 'ejsCommentOpen',
+    name: 'ejsComment',
     identifier: '<%#',
-    type: 'ejs_comment',
+    closeIdentifiers: ['-%>', '%>'],
     dir: 1,
-    spaceAfter: true,
+    ejs: {
+      spaceAfter: true
+    },
     enableEJS: true
   },
   {
     family: 'block',
-    name: 'ejsEscapeOpen',
+    name: 'ejsEscape',
     identifier: '<%=',
-    type: 'ejs_escape',
+    closeIdentifiers: ['-%>', '%>'],
     dir: 1,
-    spaceAfter: true,
+    ejs: {
+      spaceAfter: true
+    },
     enableEJS: true
   },
   {
     family: 'block',
-    name: 'ejsUnescapeOpen',
+    name: 'ejsUnescape',
     identifier: '<%-',
-    type: 'ejs_unescape',
+    closeIdentifiers: ['-%>', '%>'],
     dir: 1,
-    spaceAfter: true,
+    ejs: {
+      spaceAfter: true,
+      keepInline: true
+    },
     enableEJS: true
   },
   {
     family: 'block',
     name: 'ejsOpen',
     identifier: '<%',
-    type: 'ejs',
+    closeIdentifiers: ['-%>', '%>'],
     dir: 1,
-    lineBreakAfter: true,
-    enableEJS: true,
-    indentEJS: true
+    ejs: {
+      lineBreakAfter: true,
+      indent: true,
+      keepInline: true
+    },
+    enableEJS: true
   },
   {
     family: 'block',
     name: 'ejsTrimClose',
     identifier: '-%>',
     dir: -1,
-    spaceBefore: true,
+    ejs: {
+      spaceBefore: true
+    },
     disableEJS: true
   },
   {
@@ -167,8 +214,11 @@ export const blocks: Def[] = [
     name: 'ejsClose',
     identifier: '%>',
     dir: -1,
-    lineBreakBefore: true,
-    lineBreakAfter: true,
+    ejs: {
+      lineBreakBefore: true,
+      lineBreakAfter: true,
+      keepInline: true
+    },
     disableEJS: true
   }
 ]
@@ -178,141 +228,295 @@ export const operators: Def[] = [
     family: 'operator',
     name: 'pow-1',
     identifier: '^-1',
-    type: 'pow-1',
-    spaceAfter: true
+    freefem: {
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'streamIn',
     identifier: '<<',
-    type: 'stream_in',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'plusPlus',
-    identifier: '++',
-    type: 'plus_plus'
+    identifier: '++'
   },
   {
     family: 'operator',
     name: 'minusMinus',
-    identifier: '--',
-    type: 'minus_minus'
+    identifier: '--'
+  },
+  {
+    family: 'operator',
+    name: 'equalEqualEqual',
+    identifier: '===',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'notEqualEqual',
+    identifier: '!==',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'equalEqual',
     identifier: '==',
-    type: 'equal_equal',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'notEqual',
     identifier: '!=',
-    type: 'not_equal',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'plusEqual',
     identifier: '+=',
-    type: 'plus_equal',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'minusEqual',
     identifier: '-=',
-    type: 'minus_equal',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'timesEqual',
+    identifier: '*=',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'divideEqual',
+    identifier: '/=',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'lowerOrEqual',
+    identifier: '<=',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'upperOrEqual',
+    identifier: '>=',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'dotDivide',
+    identifier: './',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'test',
     identifier: '??',
-    type: 'test',
-    spaceBefore: true,
-    spaceAfter: true
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'ternary',
+    identifier: '?',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'equal',
     identifier: '=',
-    type: 'equal',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'upper',
+    identifier: '>',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'lower',
+    identifier: '<',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'remaind',
+    identifier: '%',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'plus',
     identifier: '+',
-    type: 'plus',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'minus',
     identifier: '-',
-    type: 'minus',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'time',
     identifier: '*',
-    type: 'time',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'divide',
     identifier: '/',
-    type: 'divide',
-    spaceBefore: true,
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'transpose',
     identifier: "'",
-    type: 'transpose',
-    spaceAfter: true
+    freefem: {
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'caret',
-    identifier: '^',
-    type: 'caret'
+    identifier: '^'
   },
   {
     family: 'operator',
     name: 'comma',
     identifier: ',',
-    type: 'comma',
-    spaceAfter: true
+    freefem: {
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'semiComma',
     identifier: ';',
-    type: 'semi-comma',
-    spaceAfter: true
+    freefem: {
+      spaceAfter: true
+    }
   },
   {
     family: 'operator',
     name: 'colon',
     identifier: ':',
-    type: 'colon',
-    spaceAfter: true
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
+      spaceAfter: true
+    }
   }
+]
+
+export const types = [
+  'int[int, int]',
+  'complex[int, int]',
+  'real[int, int]',
+  'int[int]',
+  'complex[int]',
+  'real[int]',
+  'int[string]',
+  'complex[string]',
+  'real[string]',
+  'bool',
+  'border',
+  'complex',
+  'fespace',
+  'func',
+  'int',
+  'macro',
+  'matrix',
+  'mesh',
+  'mesh3',
+  'problem',
+  'real',
+  'solve',
+  'string',
+  'varf'
+]
+
+export const keywords = [
+  'break',
+  'catch',
+  'continue',
+  'else',
+  'for',
+  'if',
+  'try',
+  'while'
 ]

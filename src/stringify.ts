@@ -34,7 +34,7 @@ const stringifyOperator = (code: string, child: Node): string => {
  * @param child Child
  */
 const stringifyComment = (code: string, child: Node): string => {
-  if (child.type === 'inline') code += child.value
+  if (child.name === 'inline') code += child.value
   else {
     code += child.value
     code += stringifyLoop(child)
