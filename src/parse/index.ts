@@ -1,6 +1,6 @@
+import { Def } from '../defs/typedef.d.js'
 import {
   blocks,
-  Def,
   inlineComment,
   keywords,
   lineBreak,
@@ -9,22 +9,9 @@ import {
   root,
   string,
   types
-} from './defs.js'
+} from '../defs/index.js'
 
-/**
- * Node interface
- */
-export interface Node extends Def {
-  value: string
-  isInline?: boolean
-  children?: Node[]
-  parent: Node
-}
-
-/**
- * Tree interface
- */
-export interface Tree extends Node {}
+import { Tree, Node, NodeRef } from './typedef.js'
 
 // Tree
 const tree: Tree = {
@@ -43,12 +30,21 @@ let inMultilineComment = false
 let inEJS = false
 
 /**
+ * Set reference
+ * @param node Node
+ * @returns Ref
+ */
+const setRef = (node?: Node): NodeRef | undefined => {
+  return node ? new WeakRef(node) : undefined
+}
+
+/**
  * Append child
  * @param node Node
  * @param child Child
  */
 const appendChild = (node: Node, child: Omit<Node, 'parent'>): void => {
-  node.children = [...(node.children || []), { ...child, parent: node }]
+  node.children = [...(node.children || []), { ...child, parent: setRef(node) }]
 }
 
 /**
@@ -108,7 +104,7 @@ const parseMultlineCommentClose = (text: string): void => {
   appendChild(currentNode, { ...closeBlock, value: close })
 
   // Get out of multiline comment block
-  currentNode = currentNode.parent
+  currentNode = currentNode.parent.deref()
   inMultilineComment = false
 
   parseLoop(end)
@@ -270,7 +266,7 @@ const parseBlockClose = (block: Def): void => {
   // Append end
   appendChild(currentNode, { ...block, value: block.identifier })
   // Get out of block
-  currentNode = currentNode.parent
+  currentNode = currentNode.parent.deref()
 }
 
 /**
@@ -356,7 +352,7 @@ const parseLoop = (text: string): void => {
         children.push({
           ...string,
           value,
-          parent: currentNode
+          parent: setRef(currentNode)
         })
     }
 
@@ -381,7 +377,7 @@ export const parse = (text: string): Tree => {
       {
         ...lineBreak,
         value: lineBreak.identifier,
-        parent: currentNode
+        parent: setRef(currentNode)
       }
     ]
   })

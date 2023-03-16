@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 
-import { parse } from './parse.js'
-import { beautify } from './beautify.js'
-import { stringify } from './stringify.js'
+import { parse } from './parse/index.js'
+import { beautify } from './beautify/index.js'
+import { stringify } from './stringify/index.js'
 
 // Input file
 const inputFile = process.argv[2]

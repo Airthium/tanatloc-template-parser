@@ -12,11 +12,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colors@npm:1.4.0":
+  version: 1.4.0
+  resolution: "colors@npm:1.4.0"
+  checksum: 98aa2c2418ad87dedf25d781be69dc5fc5908e279d9d30c34d8b702e586a0474605b3a189511482b9d5ed0d20c867515d22749537f7bc546256c6014f3ebdcec
+  languageName: node
+  linkType: hard
+
 "tanatloc-template-parser@workspace:.":
   version: 0.0.0-use.local
   resolution: "tanatloc-template-parser@workspace:."
   dependencies:
     "@types/node": 18.15.1
+    colors: 1.4.0
     typescript: 4.9.5
   languageName: unknown
   linkType: soft

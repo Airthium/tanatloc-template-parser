@@ -1,4 +1,4 @@
-import { Node, Tree } from './parse.js'
+import { Node, Tree } from '../parse/typedef.js'
 
 /**
  * Stringify block
