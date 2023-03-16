@@ -1,27 +1,16 @@
 import { Tree } from '../parse/typedef.js'
-import { NodeLR } from './typedef.js'
+import { NodeLR, TreeLR } from './typedef.js'
 
 import { multilineComment } from '../defs/index.js'
-import {
-  eatIndent,
-  eatAllIndent,
-  removeSelf,
-  setIndent,
-  setLeftAndRight
-} from './tools.js'
+import { setLeftAndRight } from './tools.js'
 import { setSpaceBefore } from './setSpaceBefore.js'
 import { setSpaceAfter } from './setSpaceAfter.js'
 import { setLineBreakBefore } from './setLineBreakBefore.js'
 import { setLineBreakAfter } from './setLineBreakAfter.js'
+import { indent } from './indent.js'
 
 // In EJS
 let inEJS = false
-
-// Current indent (code)
-let currentIndent = 0
-
-// Current indent (EJS)
-let currentEJSIndent = 0
 
 /**
  * Beautify block start
@@ -29,13 +18,13 @@ let currentEJSIndent = 0
  */
 const beautifyBlockStart = (node: NodeLR): void => {
   if (node.enableEJS) {
-    eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
+    // eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
     inEJS = true
-    if (node.ejs?.indent) currentEJSIndent += node.dir
+    // if (node.ejs?.indent) currentEJSIndent += node.dir
   } else if (inEJS) {
-    if (node.ejs?.indent) currentEJSIndent += node.dir
+    // if (node.ejs?.indent) currentEJSIndent += node.dir
   } else if (node.freefem?.indent) {
-    currentIndent += node.dir
+    // currentIndent += node.dir
   }
 
   setSpaceBefore(node, inEJS)
@@ -54,15 +43,15 @@ const beautifyBlockStart = (node: NodeLR): void => {
 const beautifyBlockEnd = (node: NodeLR): void => {
   const parent = node.parent.deref()
   if (node.disableEJS) {
-    eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
+    // eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
     inEJS = false
-    if (parent.ejs?.indent) currentEJSIndent += node.dir
+    // if (parent.ejs?.indent) currentEJSIndent += node.dir
   } else if (inEJS) {
-    eatIndent(node)
-    if (parent.ejs?.indent) currentEJSIndent += node.dir
+    // eatIndent(node)
+    // if (parent.ejs?.indent) currentEJSIndent += node.dir
   } else {
-    eatIndent(node)
-    currentIndent += node.dir
+    // eatIndent(node)
+    // currentIndent += node.dir
   }
 
   setLineBreakBefore(node, inEJS)
@@ -92,6 +81,7 @@ const beautifyOperator = (node: NodeLR): void => {
   setSpaceBefore(node, inEJS)
   setSpaceAfter(node, inEJS)
 
+  //TODO
   // if (child.value === ';' && indentInProblem) {
   //   // indentInProblem = false
   //   currentIndent--
@@ -126,17 +116,9 @@ const beautifyComment = (node: NodeLR): void => {
  * @param node Node
  */
 const beautifyString = (node: NodeLR): void => {
-  if (node.name === 'lineBreak') {
-    if (
-      node.right?.deref().name === 'lineBreak' &&
-      node.right?.deref().right?.deref().name === 'lineBreak'
-    )
-      removeSelf(node)
-    // else setIndent(node, inEJS ? currentEJSIndent : currentIndent)
-  } else {
-    setSpaceBefore(node, true)
-    // setSpaceAfter(node, true)
-  }
+  if (node.name !== 'lineBreak') setSpaceBefore(node, inEJS, true)
+
+  //TODO
   // if (
   //   child.value === 'solve' ||
   //   child.value === 'problem' ||
@@ -179,11 +161,13 @@ const traverseTree = (tree: NodeLR): void => {
  * @param tree Tree
  * @returns Tree
  */
-export const beautify = (tree: Tree): Tree => {
+export const beautify = (tree: Tree): TreeLR => {
   setLeftAndRight(tree)
   // console.dir(tree, { depth: null })
 
   traverseTree(tree)
+
+  indent(tree)
 
   return tree
 }

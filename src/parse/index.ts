@@ -44,7 +44,13 @@ const setRef = (node?: Node): NodeRef | undefined => {
  * @param child Child
  */
 const appendChild = (node: Node, child: Omit<Node, 'parent'>): void => {
-  node.children = [...(node.children || []), { ...child, parent: setRef(node) }]
+  node.children = [
+    ...(node.children || []),
+    {
+      ...child,
+      parent: setRef(node)
+    }
+  ]
 }
 
 /**
@@ -76,14 +82,20 @@ const parseMultlineCommentOpen = (text: string): void => {
   parseLoop(begin)
 
   // Append multiline block
-  appendChild(currentNode, { ...openBlock, value: open })
+  appendChild(currentNode, {
+    ...openBlock,
+    value: open
+  })
 
   // Go in multiline comment block
   currentNode = currentNode.children[currentNode.children.length - 1]
   inMultilineComment = true
 
   // Append current text
-  appendChild(currentNode, { ...string, value: end })
+  appendChild(currentNode, {
+    ...string,
+    value: end
+  })
 }
 
 /**
@@ -99,9 +111,15 @@ const parseMultlineCommentClose = (text: string): void => {
   const end = text.slice(pos + close.length)
 
   // Append text
-  appendChild(currentNode, { ...string, value: begin })
+  appendChild(currentNode, {
+    ...string,
+    value: begin
+  })
   // Append end
-  appendChild(currentNode, { ...closeBlock, value: close })
+  appendChild(currentNode, {
+    ...closeBlock,
+    value: close
+  })
 
   // Get out of multiline comment block
   currentNode = currentNode.parent.deref()
@@ -254,6 +272,7 @@ const parseBlockOpen = (block: Def, text: string): void => {
     value: block.identifier,
     isInline: inline
   })
+
   // Go in block
   currentNode = currentNode.children[currentNode.children.length - 1]
 }
@@ -345,18 +364,14 @@ const parseLoop = (text: string): void => {
   ) {
     // Rest
     const values = text.split(' ')
-    const children = []
 
     for (const value of values) {
       if (value)
-        children.push({
+        appendChild(currentNode, {
           ...string,
-          value,
-          parent: setRef(currentNode)
+          value
         })
     }
-
-    currentNode.children = [...(currentNode.children || []), ...children]
   }
 }
 
@@ -372,14 +387,10 @@ export const parse = (text: string): Tree => {
   // Loop over lines
   lines.forEach((line) => {
     parseLoop(line)
-    currentNode.children = [
-      ...(currentNode.children || []),
-      {
-        ...lineBreak,
-        value: lineBreak.identifier,
-        parent: setRef(currentNode)
-      }
-    ]
+    appendChild(currentNode, {
+      ...lineBreak,
+      value: lineBreak.identifier
+    })
   })
 
   return tree

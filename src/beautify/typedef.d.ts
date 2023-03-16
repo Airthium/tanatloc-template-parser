@@ -8,3 +8,5 @@ export interface NodeLR extends Omit<Node, 'children' | 'parent'> {
   children?: NodeLR[]
   parent: NodeRefLR
 }
+
+export interface TreeLR extends NodeLR {}

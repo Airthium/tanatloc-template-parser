@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    // "strict": true,
     "outDir": "lib",
     "lib": ["ESNext"],
     "module": "NodeNext"
   },
-  "include": ["src/*.ts"]
+  "include": ["src/**/*.ts"]
 }

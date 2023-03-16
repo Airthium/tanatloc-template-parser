@@ -60,6 +60,7 @@ export const blocks: Def[] = [
     dir: 1,
     freefem: {
       spaceBefore: true,
+      spaceAfter: true,
       lineBreakAfter: true,
       indent: true,
       keepInline: true
@@ -76,6 +77,7 @@ export const blocks: Def[] = [
     dir: -1,
     freefem: {
       spaceBefore: true,
+      spaceAfter: true,
       lineBreakBefore: true,
       lineBreakAfter: true,
       keepInline: true

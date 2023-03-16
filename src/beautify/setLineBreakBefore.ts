@@ -23,7 +23,11 @@ const setLineBreakBeforeBlock = (node: NodeLR, inEJS: boolean): void => {
   } else {
     const left = node.left?.deref()
     const params = inEJS ? left?.ejs : left?.freefem
-    if (!params?.lineBreakAfter && left?.name !== 'lineBreak') {
+    if (
+      !params?.lineBreakAfter &&
+      left?.name !== 'lineBreak' &&
+      left?.name !== 'indent'
+    ) {
       const leftChild = {
         ...lineBreak,
         value: lineBreak.identifier

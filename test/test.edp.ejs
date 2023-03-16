@@ -1,5 +1,11 @@
-try{
-real i=0;
-  { int j = 1;
+{real i=0;
+mesh Th =square(10,10);
+fespace Uh(Th, P1);
+Uh Ux, Uy;
+
+
+
+  {{{ int j = 1;
       real value = int1d(Th)(Ux* Uy);
-    }}
+    }}}
+  }
