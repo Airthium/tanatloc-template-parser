@@ -18,13 +18,7 @@ let inEJS = false
  */
 const beautifyBlockStart = (node: NodeLR): void => {
   if (node.enableEJS) {
-    // eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
     inEJS = true
-    // if (node.ejs?.indent) currentEJSIndent += node.dir
-  } else if (inEJS) {
-    // if (node.ejs?.indent) currentEJSIndent += node.dir
-  } else if (node.freefem?.indent) {
-    // currentIndent += node.dir
   }
 
   setSpaceBefore(node, inEJS)
@@ -41,24 +35,15 @@ const beautifyBlockStart = (node: NodeLR): void => {
  * @param node Node
  */
 const beautifyBlockEnd = (node: NodeLR): void => {
-  const parent = node.parent.deref()
-  if (node.disableEJS) {
-    // eatAllIndent(node, inEJS ? currentEJSIndent : currentIndent)
-    inEJS = false
-    // if (parent.ejs?.indent) currentEJSIndent += node.dir
-  } else if (inEJS) {
-    // eatIndent(node)
-    // if (parent.ejs?.indent) currentEJSIndent += node.dir
-  } else {
-    // eatIndent(node)
-    // currentIndent += node.dir
-  }
-
   setLineBreakBefore(node, inEJS)
   setSpaceBefore(node, inEJS)
 
   setSpaceAfter(node, inEJS)
   setLineBreakAfter(node, inEJS)
+
+  if (node.disableEJS) {
+    inEJS = false
+  }
 }
 
 /**
@@ -66,7 +51,7 @@ const beautifyBlockEnd = (node: NodeLR): void => {
  * @param node Node
  */
 const beautifyBlock = (node: NodeLR): void => {
-  if (node.dir > 0) {
+  if (node.dir! > 0) {
     beautifyBlockStart(node)
   } else {
     beautifyBlockEnd(node)
@@ -80,12 +65,6 @@ const beautifyBlock = (node: NodeLR): void => {
 const beautifyOperator = (node: NodeLR): void => {
   setSpaceBefore(node, inEJS)
   setSpaceAfter(node, inEJS)
-
-  //TODO
-  // if (child.value === ';' && indentInProblem) {
-  //   // indentInProblem = false
-  //   currentIndent--
-  // }
 }
 
 /**
@@ -97,9 +76,9 @@ const beautifyComment = (node: NodeLR): void => {
     const comment = node.value.substring(2).trim().replace(/\s\s+/g, ' ')
     node.value = '// ' + comment
   } else {
-    if (node.dir > 0) {
+    if (node.dir! > 0) {
       node.children
-        .filter((c) => c.value)
+        ?.filter((c) => c.value)
         .forEach((c) => {
           if (c.name === 'lineBreak') return
           else if (c.name === multilineComment[1].name) c.value = ' ' + c.value
@@ -117,16 +96,6 @@ const beautifyComment = (node: NodeLR): void => {
  */
 const beautifyString = (node: NodeLR): void => {
   if (node.name !== 'lineBreak') setSpaceBefore(node, inEJS, true)
-
-  //TODO
-  // if (
-  //   child.value === 'solve' ||
-  //   child.value === 'problem' ||
-  //   child.value === 'varf'
-  // ) {
-  //   // indentInProblem = true
-  //   currentIndent++
-  // }
 }
 
 /**
@@ -162,12 +131,12 @@ const traverseTree = (tree: NodeLR): void => {
  * @returns Tree
  */
 export const beautify = (tree: Tree): TreeLR => {
-  setLeftAndRight(tree)
+  const treeLR = setLeftAndRight(tree)
   // console.dir(tree, { depth: null })
 
-  traverseTree(tree)
+  traverseTree(treeLR)
 
-  indent(tree)
+  indent(treeLR)
 
-  return tree
+  return treeLR
 }

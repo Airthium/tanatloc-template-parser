@@ -52,17 +52,19 @@ const eatIndent = (node: NodeLR): void => {
     // Check if last children are indent
     const children = left.children
     if (!children) ok = false
-    const length = children.length
-    for (let i = 0; i < numberOfSpaces; ++i) {
-      if (children[length - 1 - i]?.name !== 'indent') {
-        ok = false
-        break
+    else {
+      const length = children.length
+      for (let i = 0; i < numberOfSpaces; ++i) {
+        if (children[length - 1 - i]?.name !== 'indent') {
+          ok = false
+          break
+        }
       }
-    }
 
-    if (ok)
-      for (let i = 0; i < numberOfSpaces; ++i)
-        removeSelf(children[length - 1 - i])
+      if (ok)
+        for (let i = 0; i < numberOfSpaces; ++i)
+          removeSelf(children[length - 1 - i])
+    }
   } else {
     // Check if lefts are indent
     for (let i = 0; i < numberOfSpaces; ++i) {
@@ -81,7 +83,8 @@ const eatIndent = (node: NodeLR): void => {
  * Eat all indent
  * @param node Node
  */
-const eatAllIndent = (node: NodeLR, indent: number): void => {
+const eatAllIndent = (node: NodeLR): void => {
+  const indent = inEJS ? currentEJSDepth : currentDepth
   for (let i = 0; i < indent; ++i) eatIndent(node)
 }
 
@@ -90,8 +93,16 @@ const eatAllIndent = (node: NodeLR, indent: number): void => {
  * @param node Node
  */
 const checkEJS = (node: NodeLR): void => {
-  if (node.enableEJS) inEJS = true
-  else inEJS = false
+  if (node.enableEJS) {
+    eatAllIndent(node)
+    inEJS = true
+    increaseDepth(node)
+  } else if (node.disableEJS) {
+    increaseDepth(node)
+    inEJS = false
+  } else {
+    increaseDepth(node)
+  }
 }
 
 /**
@@ -124,9 +135,6 @@ const setCurrentIndent = (node: NodeLR): void => {
     removeSelf(node)
     return
   }
-
-  // Depth
-  increaseDepth(node)
 
   // Indent
   if (node.name === 'lineBreak') setIndent(node)

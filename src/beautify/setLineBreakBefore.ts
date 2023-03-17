@@ -11,7 +11,7 @@ import { appendLeft } from './tools.js'
  * @param inEJS In EJS?
  */
 const setLineBreakBeforeBlock = (node: NodeLR, inEJS: boolean): void => {
-  if (node.dir > 0) {
+  if (node.dir! > 0) {
     console.warn(
       colors.yellow(
         '⚠ ' +

@@ -7,9 +7,13 @@ import { NodeLR } from './typedef.js'
 /**
  * Set line break after block
  * @param node Node
+ * @param inEJS In EJS?
  */
-const setLineBreakAfterBlock = (node: NodeLR): void => {
-  if (node.dir > 0) {
+const setLineBreakAfterBlock = (node: NodeLR, inEJS: boolean): void => {
+  const params = inEJS ? node.ejs : node.freefem
+  if (params?.keepInline && node.isInline) return
+
+  if (node.dir! > 0) {
     const firstChild = node.children?.[0]
     if (firstChild && firstChild.name !== 'lineBreak') {
       const leftChild = {
@@ -19,7 +23,7 @@ const setLineBreakAfterBlock = (node: NodeLR): void => {
       appendLeft(firstChild, leftChild)
     }
   } else {
-    const parentRight = node.parent.deref().right?.deref()
+    const parentRight = node.parent.deref()!.right?.deref()
     if (parentRight && parentRight.name !== 'lineBreak') {
       const rightChild = {
         ...lineBreak,
@@ -41,7 +45,7 @@ export const setLineBreakAfter = (node: NodeLR, inEJS: boolean): void => {
     (!inEJS && node.freefem?.lineBreakAfter)
   ) {
     if (node.family === 'block') {
-      setLineBreakAfterBlock(node)
+      setLineBreakAfterBlock(node, inEJS)
     } else {
       console.warn(
         colors.yellow(

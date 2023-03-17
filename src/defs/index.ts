@@ -173,6 +173,7 @@ export const blocks: Def[] = [
     closeIdentifiers: ['-%>', '%>'],
     dir: 1,
     ejs: {
+      spaceAfter: true,
       lineBreakAfter: true,
       indent: true,
       keepInline: true
@@ -235,7 +236,7 @@ export const operators: Def[] = [
     family: 'operator',
     name: 'equalEqualEqual',
     identifier: '===',
-    freefem: {
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -244,7 +245,7 @@ export const operators: Def[] = [
     family: 'operator',
     name: 'notEqualEqual',
     identifier: '!==',
-    freefem: {
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -274,6 +275,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -281,6 +286,10 @@ export const operators: Def[] = [
     name: 'minusEqual',
     identifier: '-=',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -292,6 +301,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -299,6 +312,10 @@ export const operators: Def[] = [
     name: 'divideEqual',
     identifier: '/=',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -310,6 +327,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -317,6 +338,10 @@ export const operators: Def[] = [
     name: 'upperOrEqual',
     identifier: '>=',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -355,6 +380,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -362,6 +391,10 @@ export const operators: Def[] = [
     name: 'upper',
     identifier: '>',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -373,6 +406,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -380,6 +417,10 @@ export const operators: Def[] = [
     name: 'remaind',
     identifier: '%',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -391,6 +432,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -398,6 +443,10 @@ export const operators: Def[] = [
     name: 'minus',
     identifier: '-',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -409,6 +458,10 @@ export const operators: Def[] = [
     freefem: {
       spaceBefore: true,
       spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
     }
   },
   {
@@ -416,6 +469,10 @@ export const operators: Def[] = [
     name: 'divide',
     identifier: '/',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -439,6 +496,9 @@ export const operators: Def[] = [
     identifier: ',',
     freefem: {
       spaceAfter: true
+    },
+    ejs: {
+      spaceAfter: true
     }
   },
   {
@@ -446,6 +506,9 @@ export const operators: Def[] = [
     name: 'semiComma',
     identifier: ';',
     freefem: {
+      spaceAfter: true
+    },
+    ejs: {
       spaceAfter: true
     }
   },

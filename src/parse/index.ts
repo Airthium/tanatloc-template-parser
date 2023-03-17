@@ -13,22 +13,6 @@ import {
 
 import { Tree, Node, NodeRef } from './typedef.js'
 
-// Tree
-const tree: Tree = {
-  ...root,
-  value: '',
-  parent: null
-}
-
-// Current node
-let currentNode = tree
-
-// In multline comment?
-let inMultilineComment = false
-
-// In EJS?
-let inEJS = false
-
 /**
  * Set reference
  * @param node Node
@@ -38,19 +22,35 @@ const setRef = (node?: Node): NodeRef | undefined => {
   return node ? new WeakRef(node) : undefined
 }
 
+// Tree
+const tree = {
+  ...root,
+  value: ''
+} as Tree
+
+// Current node
+let currentNode = tree as Node
+
+// In multline comment?
+let inMultilineComment = false
+
+// In EJS?
+let inEJS = false
+
 /**
  * Append child
  * @param node Node
  * @param child Child
+ * @returns New node
  */
-const appendChild = (node: Node, child: Omit<Node, 'parent'>): void => {
-  node.children = [
-    ...(node.children || []),
-    {
-      ...child,
-      parent: setRef(node)
-    }
-  ]
+const appendChild = (node: Node, child: Omit<Node, 'parent'>): Node => {
+  const newChild = {
+    ...child,
+    parent: setRef(node)!
+  }
+  node.children = [...(node.children || []), newChild]
+
+  return newChild
 }
 
 /**
@@ -82,13 +82,13 @@ const parseMultlineCommentOpen = (text: string): void => {
   parseLoop(begin)
 
   // Append multiline block
-  appendChild(currentNode, {
+  const newNode = appendChild(currentNode, {
     ...openBlock,
     value: open
   })
 
   // Go in multiline comment block
-  currentNode = currentNode.children[currentNode.children.length - 1]
+  currentNode = newNode
   inMultilineComment = true
 
   // Append current text
@@ -122,7 +122,7 @@ const parseMultlineCommentClose = (text: string): void => {
   })
 
   // Get out of multiline comment block
-  currentNode = currentNode.parent.deref()
+  currentNode = currentNode.parent.deref()!
   inMultilineComment = false
 
   parseLoop(end)
@@ -261,20 +261,20 @@ const parseBlockOpen = (block: Def, text: string): void => {
   // Check inline
   let inline = false
   const numberOfOpens = text.split(block.identifier).length - 1
-  block.closeIdentifiers.forEach((closeIdentifier) => {
+  block.closeIdentifiers?.forEach((closeIdentifier) => {
     const numberOfCloses = text.split(closeIdentifier).length - 1
     if (numberOfCloses > numberOfOpens) inline = true
   })
 
   // Append block
-  appendChild(currentNode, {
+  const newNode = appendChild(currentNode, {
     ...block,
     value: block.identifier,
     isInline: inline
   })
 
   // Go in block
-  currentNode = currentNode.children[currentNode.children.length - 1]
+  currentNode = newNode
 }
 
 /**
@@ -285,7 +285,7 @@ const parseBlockClose = (block: Def): void => {
   // Append end
   appendChild(currentNode, { ...block, value: block.identifier })
   // Get out of block
-  currentNode = currentNode.parent.deref()
+  currentNode = currentNode.parent.deref()!
 }
 
 /**

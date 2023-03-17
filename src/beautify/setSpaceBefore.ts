@@ -9,7 +9,7 @@ import { appendLeft } from './tools.js'
  * @param inEJS In EJS?
  */
 const setSpaceBeforeBlock = (node: NodeLR, inEJS: boolean): void => {
-  if (node.dir > 0) {
+  if (node.dir! > 0) {
     const left = node.left?.deref()
     if (
       left &&

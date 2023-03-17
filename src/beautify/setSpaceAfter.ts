@@ -1,7 +1,33 @@
+import colors from 'colors'
+
 import { NodeLR } from './typedef.js'
 
 import { space } from '../defs/index.js'
-import { appendRight } from './tools.js'
+import { appendLeft, appendRight } from './tools.js'
+
+const setSpaceAfterBlock = (node: NodeLR) => {
+  if (node.dir! > 0) {
+    const firstChild = node.children?.[0]
+    if (
+      firstChild?.name !== 'lineBreak' &&
+      firstChild?.name !== 'space' &&
+      firstChild?.name !== 'indent'
+    ) {
+      const rightChild = {
+        ...space,
+        value: space.identifier
+      }
+
+      appendLeft(firstChild!, rightChild)
+    }
+  } else {
+    console.warn(
+      colors.yellow(
+        '⚠ ' + setSpaceAfterBlock.name + ' not implemented for dir ' + node.dir
+      )
+    )
+  }
+}
 
 /**
  * Set space after
@@ -20,10 +46,18 @@ export const setSpaceAfter = (
     (!inEJS && node.freefem?.spaceAfter)
   ) {
     if (node.family === 'block') {
-      // TODO
+      setSpaceAfterBlock(node)
     } else {
+      const left = node.left?.deref()
       const right = node.right?.deref()
-      if (right?.name !== 'lineBreak' && right?.name !== 'space') {
+      if (
+        left?.name !== 'lineBreak' &&
+        left?.name !== 'space' &&
+        left?.name !== 'indent' &&
+        right?.name !== 'lineBreak' &&
+        right?.name !== 'space' &&
+        right?.name !== 'indent'
+      ) {
         const rightChild = {
           ...space,
           value: space.identifier

@@ -3,9 +3,15 @@ mesh Th =square(10,10);
 fespace Uh(Th, P1);
 Uh Ux, Uy;
 
-
+<% const inline = true -%>
+  <% 
+  const multiline = 'multiline'
+  %>
 
   {{{ int j = 1;
       real value = int1d(Th)(Ux* Uy);
     }}}
   }
+
+
+  
