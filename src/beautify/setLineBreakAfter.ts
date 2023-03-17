@@ -1,8 +1,9 @@
 import colors from 'colors'
-import { lineBreak } from '../defs/index.js'
-import { appendLeft, appendRight } from './tools.js'
 
 import { NodeLR } from './typedef.js'
+
+import { lineBreak } from '../defs/index.js'
+import { appendLeft, appendRight } from './tools.js'
 
 /**
  * Set line break after block

@@ -14,4 +14,47 @@ Uh Ux, Uy;
   }
 
 
-  
+  try{
+    real i=0;
+      { int j = 1;
+          real value = int1d(Th)(Ux* Uy);
+        } varf myProblem ([Ux, Uy], [Uhy, Uhy])
+          = int2d(Th)(
+            grad(U)' * grad(Uh))
+            <% if (test) { -%>
+              + on(1, Ux =0)
+              <% } -%>
+            ;
+      
+    
+    
+          //Inline   comment
+        for (int i = 0; i < 10; ++i){
+          cout << i << endl;     //    Inline comment 2
+        }
+    
+        /*
+        Some multiline
+          comment
+        */
+    
+        real value = (i == 0) ? 0. : 10.;
+        real[int] test = [1, 2, 3];
+    
+        if (i == 0) {
+          cout << "i = 0" << endl;
+        } else if (i != 1) {
+          cout << "i != 1" << endl;
+        } else {
+          cout << "i unknown" << endl;
+        }
+          
+        <%# EJS COMMENT-%>
+      
+        <%
+        let coucou = 'coucou'; let coucou2 = 'coucou2';
+        -%>
+        <% const inline = true -%>
+      }catch(...){
+        cout << "error" << endl;
+      }

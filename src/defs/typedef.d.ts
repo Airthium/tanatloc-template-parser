@@ -6,6 +6,7 @@ export interface BeautifierParams {
   indent?: true
   keepInline?: true
   skip?: true
+  eatLineBreakBefore?: true
 }
 
 export type Families = 'root' | 'comment' | 'string' | 'block' | 'operator'

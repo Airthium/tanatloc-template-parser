@@ -48,12 +48,8 @@ export const setSpaceAfter = (
     if (node.family === 'block') {
       setSpaceAfterBlock(node)
     } else {
-      const left = node.left?.deref()
       const right = node.right?.deref()
       if (
-        left?.name !== 'lineBreak' &&
-        left?.name !== 'space' &&
-        left?.name !== 'indent' &&
         right?.name !== 'lineBreak' &&
         right?.name !== 'space' &&
         right?.name !== 'indent'

@@ -63,12 +63,20 @@ export const setSpaceBefore = (
     if (node.family === 'block') {
       setSpaceBeforeBlock(node, inEJS)
     } else {
-      const left = node.left?.deref()
+      let left = node.left?.deref()
+
+      if (left?.family === 'block') {
+        const children = left.children
+        left = children?.[children.length - 1]
+      }
+
       if (
         left &&
         left.name !== 'lineBreak' &&
         left.name !== 'space' &&
-        left.name !== 'indent'
+        left.name !== 'indent' &&
+        left.identifier !== '++' &&
+        left.identifier !== '--'
       ) {
         const leftChild = {
           ...space,

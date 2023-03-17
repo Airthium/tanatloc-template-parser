@@ -130,7 +130,11 @@ export const blocks: Def[] = [
     family: 'block',
     name: 'parenthesisClose',
     identifier: ')',
-    dir: -1
+    dir: -1,
+    freefem: {
+      lineBreakBefore: true,
+      keepInline: true
+    }
   },
   {
     family: 'block',
@@ -526,40 +530,219 @@ export const operators: Def[] = [
   }
 ]
 
-export const types = [
-  'int[int, int]',
-  'complex[int, int]',
-  'real[int, int]',
-  'int[int]',
-  'complex[int]',
-  'real[int]',
-  'int[string]',
-  'complex[string]',
-  'real[string]',
-  'bool',
-  'border',
-  'complex',
-  'fespace',
-  'func',
-  'int',
-  'macro',
-  'matrix',
-  'mesh',
-  'mesh3',
-  'problem',
-  'real',
-  'solve',
-  'string',
-  'varf'
+export const types: Def[] = [
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'int[int, int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'complex[int, int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'real[int, int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'int[int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'complex[int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'real[int]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'int[string]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'complex[string]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'real[string]'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'bool'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'border'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'complex'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'fespace'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'func'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'int'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'macro'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'matrix'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'mesh'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'mesh3'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'problem',
+    closeIdentifiers: [';'],
+    dir: 1,
+    freefem: {
+      indent: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'real'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'solve',
+    closeIdentifiers: [';'],
+    dir: 1,
+    freefem: {
+      indent: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'string'
+  },
+  {
+    family: 'string',
+    name: 'type',
+    identifier: 'varf',
+    closeIdentifiers: [';'],
+    dir: 1,
+    freefem: {
+      indent: true
+    }
+  }
 ]
 
-export const keywords = [
-  'break',
-  'catch',
-  'continue',
-  'else',
-  'for',
-  'if',
-  'try',
-  'while'
+export const keywords: Def[] = [
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'break'
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'catch',
+    freefem: {
+      spaceAfter: true,
+      eatLineBreakBefore: true
+    },
+    ejs: {
+      spaceAfter: true,
+      eatLineBreakBefore: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'continue'
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'else',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true,
+      eatLineBreakBefore: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true,
+      eatLineBreakBefore: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'for',
+    freefem: {
+      spaceAfter: true
+    },
+    ejs: {
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'if',
+    freefem: {
+      spaceAfter: true
+    },
+    ejs: {
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'try'
+  },
+  {
+    family: 'string',
+    name: 'keyword',
+    identifier: 'while',
+    freefem: {
+      spaceAfter: true
+    },
+    ejs: {
+      spaceAfter: true
+    }
+  }
 ]

@@ -7,7 +7,11 @@ import { setSpaceBefore } from './setSpaceBefore.js'
 import { setSpaceAfter } from './setSpaceAfter.js'
 import { setLineBreakBefore } from './setLineBreakBefore.js'
 import { setLineBreakAfter } from './setLineBreakAfter.js'
+import { eatLineBreakBefore } from './eatLineBreakBefore.js'
 import { indent } from './indent.js'
+
+// TODO some ejs is not correctl inline (because of keyword?)
+// TODO parenthessis not inlin not indented
 
 // In EJS
 let inEJS = false
@@ -95,6 +99,16 @@ const beautifyComment = (node: NodeLR): void => {
  * @param node Node
  */
 const beautifyString = (node: NodeLR): void => {
+  if (node.name === 'type' || node.name === 'keyword') {
+    eatLineBreakBefore(node, inEJS)
+
+    setSpaceBefore(node, inEJS)
+    setLineBreakBefore(node, inEJS)
+
+    setLineBreakAfter(node, inEJS)
+    setSpaceAfter(node, inEJS)
+  }
+
   if (node.name !== 'lineBreak') setSpaceBefore(node, inEJS, true)
 }
 

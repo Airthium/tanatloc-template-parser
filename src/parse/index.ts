@@ -1,4 +1,6 @@
 import { Def } from '../defs/typedef.d.js'
+import { Tree, Node, NodeRef } from './typedef.js'
+
 import {
   blocks,
   inlineComment,
@@ -10,8 +12,6 @@ import {
   string,
   types
 } from '../defs/index.js'
-
-import { Tree, Node, NodeRef } from './typedef.js'
 
 /**
  * Set reference
@@ -204,17 +204,16 @@ const parseEJSString = (text: string): boolean => {
 const parseType = (text: string): boolean => {
   const words = text.split(' ')
   for (const type of types) {
-    if (words.includes(type)) {
-      const index = words.indexOf(type)
+    if (words.includes(type.identifier)) {
+      const index = words.indexOf(type.identifier)
       const begin = words.slice(0, index).join(' ')
       const end = words.slice(index + 1).join(' ')
 
       parseLoop(begin)
 
       appendChild(currentNode, {
-        ...string,
-        name: 'type',
-        value: type
+        ...type,
+        value: type.identifier
       })
 
       parseLoop(end)
@@ -234,14 +233,17 @@ const parseType = (text: string): boolean => {
 const parseKeyword = (text: string): boolean => {
   const words = text.split(' ')
   for (const keyword of keywords) {
-    if (words.includes(keyword)) {
-      const index = words.indexOf(keyword)
+    if (words.includes(keyword.identifier)) {
+      const index = words.indexOf(keyword.identifier)
       const begin = words.slice(0, index).join(' ')
       const end = words.slice(index + 1).join(' ')
 
       parseLoop(begin)
 
-      appendChild(currentNode, { ...string, name: 'keyword', value: keyword })
+      appendChild(currentNode, {
+        ...keyword,
+        value: keyword.identifier
+      })
 
       parseLoop(end)
 
@@ -260,11 +262,14 @@ const parseKeyword = (text: string): boolean => {
 const parseBlockOpen = (block: Def, text: string): void => {
   // Check inline
   let inline = false
-  const numberOfOpens = text.split(block.identifier).length - 1
+  let openPos = text.indexOf(block.identifier)
+  if (openPos === -1) openPos = text.length
+  let closePos = text.length
   block.closeIdentifiers?.forEach((closeIdentifier) => {
-    const numberOfCloses = text.split(closeIdentifier).length - 1
-    if (numberOfCloses > numberOfOpens) inline = true
+    const currentClosePos = text.indexOf(closeIdentifier)
+    if (currentClosePos !== -1) closePos = Math.min(closePos, currentClosePos)
   })
+  if (closePos < openPos) inline = true
 
   // Append block
   const newNode = appendChild(currentNode, {

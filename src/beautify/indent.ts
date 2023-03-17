@@ -15,6 +15,9 @@ let currentDepth = 0
 // Current EJS depth
 let currentEJSDepth = 0
 
+// Custom indent
+let customIndent: string[] | undefined = undefined
+
 /**
  * Set indent
  * @param node Node
@@ -39,6 +42,31 @@ const setIndent = (node: NodeLR): void => {
 }
 
 /**
+ * Eat indent in block
+ * @param node Node
+ */
+const eatIndentInBlock = (node: NodeLR): void => {
+  const numberOfSpaces = indentLength
+  let ok = true
+
+  // Check if last children are indent
+  const children = node.children
+  if (!children) return
+
+  const length = children.length
+  for (let i = 0; i < numberOfSpaces; ++i) {
+    if (children[length - 1 - i]?.name !== 'indent') {
+      ok = false
+      break
+    }
+  }
+
+  if (ok)
+    for (let i = 0; i < numberOfSpaces; ++i)
+      removeSelf(children[length - 1 - i])
+}
+
+/**
  * Eat indent
  * @param node Node
  */
@@ -49,22 +77,7 @@ const eatIndent = (node: NodeLR): void => {
   let ok = true
   let left = node.left?.deref()
   if (left?.family === 'block') {
-    // Check if last children are indent
-    const children = left.children
-    if (!children) ok = false
-    else {
-      const length = children.length
-      for (let i = 0; i < numberOfSpaces; ++i) {
-        if (children[length - 1 - i]?.name !== 'indent') {
-          ok = false
-          break
-        }
-      }
-
-      if (ok)
-        for (let i = 0; i < numberOfSpaces; ++i)
-          removeSelf(children[length - 1 - i])
-    }
+    eatIndentInBlock(left)
   } else {
     // Check if lefts are indent
     for (let i = 0; i < numberOfSpaces; ++i) {
@@ -106,17 +119,41 @@ const checkEJS = (node: NodeLR): void => {
 }
 
 /**
+ * Check custom indent
+ * @param node Node
+ */
+const checkCustomIndent = (node: NodeLR): void => {
+  if (customIndent!.includes(node.identifier)) {
+    if (inEJS) currentEJSDepth--
+    else currentDepth--
+    customIndent = undefined
+  }
+}
+
+/**
  * Increase depth
  * @param node Node
  */
 const increaseDepth = (node: NodeLR) => {
-  const dir = node.dir
-  if (!dir) return
+  if (customIndent) {
+    checkCustomIndent(node)
+  } else {
+    const dir = node.dir
+    if (!dir) return
 
-  if (inEJS) currentEJSDepth += dir
-  else currentDepth += dir
+    // Custom indent with keywords and types
+    if (node.name === 'keyword' || node.name === 'type') {
+      customIndent = node.closeIdentifiers
+    }
 
-  if (dir < 0) eatIndent(node)
+    // Do not indent comments
+    if (node.family === 'comment') return
+
+    if (inEJS) currentEJSDepth += dir
+    else currentDepth += dir
+
+    if (dir < 0) eatIndent(node)
+  }
 }
 
 /**

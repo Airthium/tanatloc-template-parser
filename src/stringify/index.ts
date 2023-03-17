@@ -1,6 +1,18 @@
 import { Node, Tree } from '../parse/typedef.js'
 
 /**
+ * Stringify simple
+ * @param code Code
+ * @param child Child
+ * @returns Code
+ */
+const stringifySimple = (code: string, child: Node): string => {
+  code += child.value
+
+  return code
+}
+
+/**
  * Stringify block
  * @param code Code
  * @param child Child
@@ -22,11 +34,8 @@ const stringifyBlock = (code: string, child: Node, indent: number): string => {
  * @param child Child
  * @returns Code
  */
-const stringifyOperator = (code: string, child: Node): string => {
-  code += child.value
-
-  return code
-}
+const stringifyOperator = (code: string, child: Node): string =>
+  stringifySimple(code, child)
 
 /**
  * Stringify comment
@@ -49,11 +58,8 @@ const stringifyComment = (code: string, child: Node): string => {
  * @param child Child
  * @returns Code
  */
-const stringifyText = (code: string, child: Node): string => {
-  code += child.value
-
-  return code
-}
+const stringifyText = (code: string, child: Node): string =>
+  stringifySimple(code, child)
 
 /**
  * Stringify loop
