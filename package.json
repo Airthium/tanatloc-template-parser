@@ -9,7 +9,7 @@
     "url": "https://github.com/orgs/Airthium/people"
   },
   "license": "AGPL3+",
-  "packageManager": "yarn@3.4.1",
+  "packageManager": "yarn@3.5.0",
   "scripts": {
     "build": "tsc",
     "test": "yarn build && node lib/index.js ./test/test.edp.ejs"
