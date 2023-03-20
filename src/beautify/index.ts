@@ -10,9 +10,6 @@ import { setLineBreakAfter } from './setLineBreakAfter.js'
 import { eatLineBreakBefore } from './eatLineBreakBefore.js'
 import { indent } from './indent.js'
 
-// TODO some ejs is not correctl inline (because of keyword?)
-// TODO parenthessis not inlin not indented
-
 // In EJS
 let inEJS = false
 

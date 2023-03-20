@@ -108,7 +108,6 @@ export const blocks: Def[] = [
     dir: -1,
     freefem: {
       spaceBefore: true,
-      indent: true,
       keepInline: true
     },
     ejs: {

@@ -209,7 +209,7 @@ const parseType = (text: string): boolean => {
       const begin = words.slice(0, index).join(' ')
       const end = words.slice(index + 1).join(' ')
 
-      parseLoop(begin)
+      parseLoop(begin, end)
 
       appendChild(currentNode, {
         ...type,
@@ -238,7 +238,7 @@ const parseKeyword = (text: string): boolean => {
       const begin = words.slice(0, index).join(' ')
       const end = words.slice(index + 1).join(' ')
 
-      parseLoop(begin)
+      parseLoop(begin, end)
 
       appendChild(currentNode, {
         ...keyword,
@@ -258,8 +258,9 @@ const parseKeyword = (text: string): boolean => {
  * Parse block open
  * @param block Block def
  * @param text Text
+ * @param next Next
  */
-const parseBlockOpen = (block: Def, text: string): void => {
+const parseBlockOpen = (block: Def, text: string, next?: string): void => {
   // Check inline
   let inline = false
   let openPos = text.indexOf(block.identifier)
@@ -268,6 +269,10 @@ const parseBlockOpen = (block: Def, text: string): void => {
   block.closeIdentifiers?.forEach((closeIdentifier) => {
     const currentClosePos = text.indexOf(closeIdentifier)
     if (currentClosePos !== -1) closePos = Math.min(closePos, currentClosePos)
+
+    const currentClosePosInNext = next?.indexOf(closeIdentifier)
+    if (currentClosePosInNext && currentClosePosInNext !== -1)
+      closePos = Math.min(closePos, currentClosePos)
   })
   if (closePos < openPos) inline = true
 
@@ -293,36 +298,66 @@ const parseBlockClose = (block: Def): void => {
   currentNode = currentNode.parent.deref()!
 }
 
-/**
- * Parse block
- * @param text Text
- * @returns Parsed?
- */
-const parseBlock = (text: string): boolean => {
-  for (const block of blocks) {
-    if (text.includes(block.identifier)) {
-      const pos = text.indexOf(block.identifier)
-      const begin = text.slice(0, pos)
-      const end = text.slice(pos + block.identifier.length)
+const indexOfMin = (array: number[]): number => {
+  if (array.length === 0) return -1
 
-      parseLoop(begin)
+  let min = array[0]
+  let minIndex = 0
 
-      if (block.enableEJS) inEJS = true
-      if (block.disableEJS) inEJS = false
-
-      if (block.dir === 1) {
-        parseBlockOpen(block, end)
-      } else {
-        parseBlockClose(block)
-      }
-
-      parseLoop(end)
-
-      return true
+  for (let i = 0; i < array.length; ++i) {
+    const localMin = array[i]
+    if (localMin < min) {
+      minIndex = i
+      min = localMin
     }
   }
 
-  return false
+  return minIndex
+}
+
+/**
+ * Parse block
+ * @param text Text
+ * @param next Next
+ * @returns Parsed?
+ */
+const parseBlock = (text: string, next?: string): boolean => {
+  // Find first block open
+  let ok = false
+  const positions = blocks.map((block) => {
+    const pos = text.indexOf(block.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return false
+
+  // Parse
+  const first = indexOfMin(positions)
+  const block = blocks[first]
+
+  const pos = positions[first]
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos + block.identifier.length)
+
+  parseLoop(begin)
+
+  if (block.enableEJS) inEJS = true
+  if (block.disableEJS) inEJS = false
+
+  if (block.dir === 1) {
+    parseBlockOpen(block, end, next)
+  } else {
+    parseBlockClose(block)
+  }
+
+  parseLoop(end)
+
+  return true
 }
 
 /**
@@ -353,8 +388,9 @@ const parseOperator = (text: string): boolean => {
 /**
  * Parse loop
  * @param text Text
+ * @param next Next
  */
-const parseLoop = (text: string): void => {
+const parseLoop = (text: string, next?: string): void => {
   if (!text) return
 
   text = text.trim()
@@ -364,7 +400,7 @@ const parseLoop = (text: string): void => {
     !parseEJSString(text) && // String
     !parseType(text) && // Types
     !parseKeyword(text) && // Keyword
-    !parseBlock(text) && // Blocks
+    !parseBlock(text, next) && // Blocks
     !parseOperator(text) // Operators
   ) {
     // Rest

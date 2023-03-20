@@ -119,15 +119,12 @@ const checkEJS = (node: NodeLR): void => {
 }
 
 /**
- * Check custom indent
- * @param node Node
+ * Unset custom indent
  */
-const checkCustomIndent = (node: NodeLR): void => {
-  if (customIndent!.includes(node.identifier)) {
-    if (inEJS) currentEJSDepth--
-    else currentDepth--
-    customIndent = undefined
-  }
+const unsetCustomIndent = (): void => {
+  if (inEJS) currentEJSDepth--
+  else currentDepth--
+  customIndent = undefined
 }
 
 /**
@@ -135,8 +132,8 @@ const checkCustomIndent = (node: NodeLR): void => {
  * @param node Node
  */
 const increaseDepth = (node: NodeLR) => {
-  if (customIndent) {
-    checkCustomIndent(node)
+  if (customIndent && customIndent.includes(node.identifier)) {
+    unsetCustomIndent()
   } else {
     const dir = node.dir
     if (!dir) return
