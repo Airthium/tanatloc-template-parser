@@ -27,8 +27,8 @@ const setSpaceBeforeBlock = (node: NodeLR, inEJS: boolean): void => {
   } else {
     const left = node.left?.deref()
     const leftParams = inEJS ? left?.ejs : left?.freefem
-
     if (
+      left &&
       (left?.isInline ? true : !leftParams?.lineBreakAfter) &&
       left?.name !== 'lineBreak' &&
       left?.name !== 'space' &&
@@ -72,11 +72,10 @@ export const setSpaceBefore = (
 
       if (
         left &&
+        left.family !== 'operator' &&
         left.name !== 'lineBreak' &&
         left.name !== 'space' &&
-        left.name !== 'indent' &&
-        left.identifier !== '++' &&
-        left.identifier !== '--'
+        left.name !== 'indent'
       ) {
         const leftChild = {
           ...space,

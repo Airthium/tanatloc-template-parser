@@ -66,6 +66,18 @@ const beautifyBlock = (node: NodeLR): void => {
 const beautifyOperator = (node: NodeLR): void => {
   setSpaceBefore(node, inEJS)
   setSpaceAfter(node, inEJS)
+
+  // EJS Ternary operator?
+  if (inEJS && node.value === ':') {
+    let left = node.left?.deref()
+    while (left && left.value !== 'lineBreak') {
+      if (left.value === '?') {
+        setSpaceBefore(node, inEJS, true)
+        break
+      }
+      left = left?.left?.deref()
+    }
+  }
 }
 
 /**

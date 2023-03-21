@@ -87,7 +87,6 @@ const eatIndent = (node: NodeLR): void => {
       }
       left = left.left?.deref()
     }
-
     if (ok) for (let i = 0; i < numberOfSpaces; ++i) removeLeft(node)
   }
 }
@@ -109,12 +108,12 @@ const checkEJS = (node: NodeLR): void => {
   if (node.enableEJS) {
     eatAllIndent(node)
     inEJS = true
-    increaseDepth(node)
+    updateDepth(node)
   } else if (node.disableEJS) {
-    increaseDepth(node)
+    updateDepth(node)
     inEJS = false
   } else {
-    increaseDepth(node)
+    updateDepth(node)
   }
 }
 
@@ -131,7 +130,37 @@ const unsetCustomIndent = (): void => {
  * Increase depth
  * @param node Node
  */
-const increaseDepth = (node: NodeLR) => {
+const increaseDepth = (node: NodeLR): void => {
+  const params = inEJS ? node.ejs : node.freefem
+  if (!params?.indent) return
+
+  const dir = node.dir!
+
+  if (inEJS) currentEJSDepth += dir
+  else currentDepth += dir
+}
+
+/**
+ * Decrease depth
+ * @param node Node
+ */
+const decreaseDepth = (node: NodeLR): void => {
+  const parent = node.parent.deref()!
+  const parentParams = inEJS ? parent.ejs : parent.freefem
+  if (!parentParams?.indent) return
+
+  const dir = node.dir!
+
+  if (inEJS) currentEJSDepth += dir
+  else currentDepth += dir
+  eatIndent(node)
+}
+
+/**
+ * Update depth
+ * @param node Node
+ */
+const updateDepth = (node: NodeLR) => {
   if (customIndent && customIndent.includes(node.identifier)) {
     unsetCustomIndent()
   } else {
@@ -143,13 +172,11 @@ const increaseDepth = (node: NodeLR) => {
       customIndent = node.closeIdentifiers
     }
 
-    // Do not indent comments
-    if (node.family === 'comment') return
-
-    if (inEJS) currentEJSDepth += dir
-    else currentDepth += dir
-
-    if (dir < 0) eatIndent(node)
+    if (dir > 0) {
+      increaseDepth(node)
+    } else {
+      decreaseDepth(node)
+    }
   }
 }
 

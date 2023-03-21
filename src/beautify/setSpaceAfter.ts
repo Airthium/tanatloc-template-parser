@@ -9,6 +9,7 @@ const setSpaceAfterBlock = (node: NodeLR) => {
   if (node.dir! > 0) {
     const firstChild = node.children?.[0]
     if (
+      firstChild?.dir !== -1 &&
       firstChild?.name !== 'lineBreak' &&
       firstChild?.name !== 'space' &&
       firstChild?.name !== 'indent'

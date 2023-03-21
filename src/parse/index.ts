@@ -166,11 +166,11 @@ const parseComment = (text: string): boolean => {
 }
 
 /**
- * Parse EJS string
+ * Parse string
  * @param text Text
  * @returns Parsed?
  */
-const parseEJSString = (text: string): boolean => {
+const parseString = (text: string): boolean => {
   // Do not consider ' as an operator in EJS
   if (inEJS && text.includes("'")) {
     let pos = text.indexOf("'")
@@ -186,6 +186,27 @@ const parseEJSString = (text: string): boolean => {
     appendChild(currentNode, {
       ...string,
       value: "'" + stringContent + "'"
+    })
+
+    parseLoop(end)
+
+    return true
+  }
+
+  if (text.includes('"')) {
+    let pos = text.indexOf('"')
+    const begin = text.slice(0, pos)
+    const inString = text.slice(pos + 1)
+
+    parseLoop(begin, inString)
+
+    pos = inString.indexOf('"')
+    const stringContent = inString.slice(0, pos)
+    const end = inString.slice(pos + 1)
+
+    appendChild(currentNode, {
+      ...string,
+      value: '"' + stringContent + '"'
     })
 
     parseLoop(end)
@@ -298,6 +319,12 @@ const parseBlockClose = (block: Def): void => {
   currentNode = currentNode.parent.deref()!
 }
 
+/**
+ * Index of min
+ * @param array Array
+ * @param except Except
+ * @returns Index
+ */
 const indexOfMin = (array: number[]): number => {
   if (array.length === 0) return -1
 
@@ -322,7 +349,7 @@ const indexOfMin = (array: number[]): number => {
  * @returns Parsed?
  */
 const parseBlock = (text: string, next?: string): boolean => {
-  // Find first block open
+  // Find first block identifier
   let ok = false
   const positions = blocks.map((block) => {
     const pos = text.indexOf(block.identifier)
@@ -366,23 +393,39 @@ const parseBlock = (text: string, next?: string): boolean => {
  * @returns Parsed?
  */
 const parseOperator = (text: string): boolean => {
-  for (const operator of operators) {
-    if (text.includes(operator.identifier)) {
-      const pos = text.indexOf(operator.identifier)
-      const begin = text.slice(0, pos)
-      const end = text.slice(pos + operator.identifier.length)
+  // Find first operator identifier
+  let ok = false
+  const positions = operators.map((operator) => {
+    // Skip?
+    const params = inEJS ? operator.ejs : operator.freefem
+    if (params?.skip) return Number.MAX_SAFE_INTEGER
 
-      parseLoop(begin)
-
-      appendChild(currentNode, { ...operator, value: operator.identifier })
-
-      parseLoop(end)
-
-      return true
+    const pos = text.indexOf(operator.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
     }
-  }
+  })
 
-  return false
+  if (!ok) return false
+
+  // Parse
+  const first = indexOfMin(positions)
+  const operator = operators[first]
+
+  const pos = text.indexOf(operator.identifier)
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos + operator.identifier.length)
+
+  parseLoop(begin)
+
+  appendChild(currentNode, { ...operator, value: operator.identifier })
+
+  parseLoop(end)
+
+  return true
 }
 
 /**
@@ -397,7 +440,7 @@ const parseLoop = (text: string, next?: string): void => {
 
   if (
     !parseComment(text) && // Comments
-    !parseEJSString(text) && // String
+    !parseString(text) && // String
     !parseType(text) && // Types
     !parseKeyword(text) && // Keyword
     !parseBlock(text, next) && // Blocks

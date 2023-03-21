@@ -38,6 +38,7 @@ Uh Ux, Uy;
           comment
         */
     
+        real value0 = 3.*4.;
         real value = (i == 0) ? 0. : 10.;
         real[int] test = [1, 2, 3];
     
@@ -51,10 +52,14 @@ Uh Ux, Uy;
           
         <%# EJS COMMENT-%>
       
+        real Mu = E/(2.*(1.+Nu));
+
         <%
         let coucou = 'coucou'; let coucou2 = 'coucou2';
+        console.log(mesh.name)
         -%>
         <% const inline = true -%>
-      }catch(...){
-        cout << "error" << endl;
-      }
+        appendLog("End");
+}catch(...){
+cout << "error" << endl;
+}

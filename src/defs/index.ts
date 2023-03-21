@@ -48,12 +48,6 @@ export const lineBreak: Def = {
 export const blocks: Def[] = [
   {
     family: 'block',
-    name: 'braceParenthesis',
-    identifier: '})',
-    dir: -1
-  },
-  {
-    family: 'block',
     name: 'brace',
     identifier: '{',
     closeIdentifiers: ['}'],
@@ -351,6 +345,15 @@ export const operators: Def[] = [
   },
   {
     family: 'operator',
+    name: 'arrow',
+    identifier: '=>',
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
     name: 'dotDivide',
     identifier: './',
     freefem: {
@@ -372,6 +375,10 @@ export const operators: Def[] = [
     name: 'ternary',
     identifier: '?',
     freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
       spaceBefore: true,
       spaceAfter: true
     }
@@ -525,6 +532,14 @@ export const operators: Def[] = [
     },
     ejs: {
       spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'dot',
+    identifier: '.',
+    freefem: {
+      skip: true
     }
   }
 ]
