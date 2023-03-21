@@ -13,6 +13,8 @@ import {
   types
 } from '../defs/index.js'
 
+// TODO treat [] as ?
+
 /**
  * Set reference
  * @param node Node
@@ -276,6 +278,28 @@ const parseKeyword = (text: string): boolean => {
 }
 
 /**
+ * Get indices
+ * @param text Text
+ * @param separator Separator
+ * @returns Indices
+ */
+const getIndices = (text: string, separator: string): number[] => {
+  const indices = []
+
+  let currentPos = 0
+  let currentText = text
+  let pos = text.indexOf(separator)
+  while (pos !== -1) {
+    indices.push(currentPos + pos)
+    currentPos += pos + separator.length
+    currentText = currentText.slice(pos + separator.length)
+    pos = currentText.indexOf(separator)
+  }
+
+  return indices
+}
+
+/**
  * Parse block open
  * @param block Block def
  * @param text Text
@@ -284,18 +308,24 @@ const parseKeyword = (text: string): boolean => {
 const parseBlockOpen = (block: Def, text: string, next?: string): void => {
   // Check inline
   let inline = false
-  let openPos = text.indexOf(block.identifier)
-  if (openPos === -1) openPos = text.length
-  let closePos = text.length
+  let opens = getIndices(text, block.identifier)
+  let closes: number[] = []
   block.closeIdentifiers?.forEach((closeIdentifier) => {
-    const currentClosePos = text.indexOf(closeIdentifier)
-    if (currentClosePos !== -1) closePos = Math.min(closePos, currentClosePos)
-
-    const currentClosePosInNext = next?.indexOf(closeIdentifier)
-    if (currentClosePosInNext && currentClosePosInNext !== -1)
-      closePos = Math.min(closePos, currentClosePos)
+    const localCloses = getIndices(text, closeIdentifier)
+    const nextCloses = next ? getIndices(next, closeIdentifier) : []
+    closes = [...localCloses, ...nextCloses]
   })
-  if (closePos < openPos) inline = true
+  closes.sort((a, b) => a - b)
+
+  for (const close of closes) {
+    if (!opens[0] || close < opens[0]) {
+      inline = true
+      break
+    } else {
+      opens = opens.slice(1)
+      closes = closes.slice(1)
+    }
+  }
 
   // Append block
   const newNode = appendChild(currentNode, {
