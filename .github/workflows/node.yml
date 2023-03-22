@@ -23,8 +23,8 @@ jobs:
       - name: Lint
         run: yarn prettier
 
-      # - name: Doc
-      #   run: yarn run doc
+      - name: Doc
+        run: yarn doc
 
       - name: Tests
         run: yarn test

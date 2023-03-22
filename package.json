@@ -11,12 +11,13 @@
   "license": "AGPL3+",
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "depcheck": "depcheck --ignores ts-jest,@types/jest",
+    "depcheck": "depcheck --ignores ts-jest,@types/jest,@airthium/typedoc-plugin-airthium",
     "prettier": "prettier -l '**/*.{js,jsx,ts,tsx,json,md,css}'",
     "doc": "typedoc",
     "test": "jest",
     "coverage": "jest --coverage",
-    "build": "tsc"
+    "build": "tsc",
+    "workflow": "./.github/workflows/node.sh"
   },
   "dependencies": {
     "colors": "1.4.0",
