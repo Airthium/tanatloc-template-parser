@@ -1,3 +1,5 @@
+/** @module Src.Defs */
+
 import { Def } from './typedef.d.js'
 
 /**

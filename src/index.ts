@@ -1,3 +1,5 @@
+/** @module Src */
+
 import * as fs from 'fs'
 
 import { parse } from './parse/index.js'
@@ -24,7 +26,6 @@ const fileContent = fs.readFileSync(inputFile)
 const content = fileContent.toString()
 
 const tree = parse(content)
-// console.dir(tree, { depth: null })
 
 const beautifiedTree = beautify(tree)
 

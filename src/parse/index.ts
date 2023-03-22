@@ -1,3 +1,5 @@
+/** @module Src.Parse */
+
 import { Def } from '../defs/typedef.d.js'
 import { Tree, Node, NodeRef } from './typedef.js'
 

@@ -1,3 +1,5 @@
+/** @module Src.Beautify.EatLineBreakBefore */
+
 import { NodeLR } from './typedef.js'
 
 import { removeSelf } from './tools.js'

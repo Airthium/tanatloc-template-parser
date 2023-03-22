@@ -1,3 +1,5 @@
+/** @module Src.Stringify */
+
 import { Node, Tree } from '../parse/typedef.js'
 
 /**

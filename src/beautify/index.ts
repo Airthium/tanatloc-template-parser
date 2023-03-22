@@ -1,3 +1,5 @@
+/** @module Src.Beautify */
+
 import { Tree } from '../parse/typedef.js'
 import { NodeLR, TreeLR } from './typedef.js'
 

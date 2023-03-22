@@ -1,3 +1,5 @@
+/** @module Src.Beautify.SetLineBreakAfter */
+
 import colors from 'colors/safe.js'
 
 import { NodeLR } from './typedef.js'

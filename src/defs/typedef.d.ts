@@ -1,3 +1,8 @@
+/** @module Src.Defs.Types */
+
+/**
+ * Beautifier params
+ */
 export interface BeautifierParams {
   spaceBefore?: true
   spaceAfter?: true
@@ -9,8 +14,14 @@ export interface BeautifierParams {
   eatLineBreakBefore?: true
 }
 
+/**
+ * Families
+ */
 export type Families = 'root' | 'comment' | 'string' | 'block' | 'operator'
 
+/**
+ * Def
+ */
 export interface Def {
   family: Families
   name: string

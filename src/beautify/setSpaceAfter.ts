@@ -1,3 +1,5 @@
+/** @module Src.Beautify.SetSpaceAfter */
+
 import colors from 'colors/safe.js'
 
 import { NodeLR } from './typedef.js'
@@ -5,6 +7,10 @@ import { NodeLR } from './typedef.js'
 import { space } from '../defs/index.js'
 import { appendLeft, appendRight } from './tools.js'
 
+/**
+ * Set space after block
+ * @param node Node
+ */
 const setSpaceAfterBlock = (node: NodeLR) => {
   if (node.dir! > 0) {
     const firstChild = node.children?.[0]

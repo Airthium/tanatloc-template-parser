@@ -1,3 +1,5 @@
+/** @module Src.Beautify.Tools */
+
 import { Node } from '../parse/typedef.js'
 import { NodeLR, NodeRefLR } from './typedef.js'
 

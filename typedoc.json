@@ -1,0 +1,9 @@
+{
+  "name": "Tanatloc Template Parser",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "includeVersion": true,
+  "out": "doc",
+  "readme": "README.md",
+  "plugin": ["@airthium/typedoc-plugin-airthium"]
+}

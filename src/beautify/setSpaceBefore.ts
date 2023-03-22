@@ -1,3 +1,5 @@
+/** @module Src.Beautify.SetSpaceBefore */
+
 import { NodeLR } from './typedef.js'
 
 import { space } from '../defs/index.js'

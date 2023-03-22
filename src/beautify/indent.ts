@@ -1,3 +1,5 @@
+/** @module Src.Beautify.Indent */
+
 import { NodeLR, TreeLR } from './typedef.js'
 
 import { space } from '../defs/index.js'

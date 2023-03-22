@@ -14,8 +14,11 @@ src/**/*.js
 # Lib
 /lib
 
+# Doc
+/doc
+
 # Tests
-tests/assets/test1.jest.edp.ejs
+/tests/assets/test1.jest.edp.ejs
 
 # Coverage
-coverage
+/coverage
