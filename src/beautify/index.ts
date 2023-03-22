@@ -118,6 +118,8 @@ const beautifyString = (node: NodeLR): void => {
     setSpaceAfter(node, inEJS)
   }
 
+  if (node.name === 'custom') return
+
   if (node.name !== 'lineBreak') setSpaceBefore(node, inEJS, true)
 }
 

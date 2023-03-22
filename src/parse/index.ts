@@ -3,6 +3,7 @@ import { Tree, Node, NodeRef } from './typedef.js'
 
 import {
   blocks,
+  customs,
   inlineComment,
   keywords,
   lineBreak,
@@ -12,8 +13,6 @@ import {
   string,
   types
 } from '../defs/index.js'
-
-// TODO treat [] as ?
 
 /**
  * Set reference
@@ -53,6 +52,29 @@ const appendChild = (node: Node, child: Omit<Node, 'parent'>): Node => {
   node.children = [...(node.children || []), newChild]
 
   return newChild
+}
+
+/**
+ * Index of min
+ * @param array Array
+ * @param except Except
+ * @returns Index
+ */
+const indexOfMin = (array: number[]): number => {
+  if (array.length === 0) return -1
+
+  let min = array[0]
+  let minIndex = 0
+
+  for (let i = 0; i < array.length; ++i) {
+    const localMin = array[i]
+    if (localMin < min) {
+      minIndex = i
+      min = localMin
+    }
+  }
+
+  return minIndex
 }
 
 /**
@@ -278,6 +300,46 @@ const parseKeyword = (text: string): boolean => {
 }
 
 /**
+ * Parse custom
+ * @param text Text
+ * @returns Parsed?
+ */
+const parseCustom = (text: string): boolean => {
+  // Find first custom identifier
+  let ok = false
+  const positions = customs.map((custom) => {
+    const pos = text.indexOf(custom.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return false
+
+  // Parse
+  const first = indexOfMin(positions)
+  const custom = customs[first]
+
+  const pos = positions[first]
+  const begin = text.slice(0, pos)
+  const end = text.slice(pos + custom.identifier.length)
+
+  parseLoop(begin)
+
+  appendChild(currentNode, {
+    ...custom,
+    value: custom.identifier
+  })
+
+  parseLoop(end)
+
+  return true
+}
+
+/**
  * Get indices
  * @param text Text
  * @param separator Separator
@@ -347,29 +409,6 @@ const parseBlockClose = (block: Def): void => {
   appendChild(currentNode, { ...block, value: block.identifier })
   // Get out of block
   currentNode = currentNode.parent.deref()!
-}
-
-/**
- * Index of min
- * @param array Array
- * @param except Except
- * @returns Index
- */
-const indexOfMin = (array: number[]): number => {
-  if (array.length === 0) return -1
-
-  let min = array[0]
-  let minIndex = 0
-
-  for (let i = 0; i < array.length; ++i) {
-    const localMin = array[i]
-    if (localMin < min) {
-      minIndex = i
-      min = localMin
-    }
-  }
-
-  return minIndex
 }
 
 /**
@@ -473,6 +512,7 @@ const parseLoop = (text: string, next?: string): void => {
     !parseString(text) && // String
     !parseType(text) && // Types
     !parseKeyword(text) && // Keyword
+    !parseCustom(text) && // Custom
     !parseBlock(text, next) && // Blocks
     !parseOperator(text) // Operators
   ) {

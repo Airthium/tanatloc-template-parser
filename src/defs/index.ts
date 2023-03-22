@@ -1,17 +1,26 @@
 import { Def } from './typedef.d.js'
 
+/**
+ * Root
+ */
 export const root: Def = {
   family: 'root',
   name: 'root',
   identifier: ''
 }
 
+/**
+ * Inline comment
+ */
 export const inlineComment: Def = {
   family: 'comment',
   name: 'inline',
   identifier: '//'
 }
 
+/**
+ * Multiline comment
+ */
 export const multilineComment: Def[] = [
   {
     family: 'comment',
@@ -27,24 +36,36 @@ export const multilineComment: Def[] = [
   }
 ]
 
+/**
+ * Text
+ */
 export const string: Def = {
   family: 'string',
   name: 'text',
   identifier: ''
 }
 
+/**
+ * Space
+ */
 export const space: Def = {
   family: 'string',
   name: 'space',
   identifier: ' '
 }
 
+/**
+ * Line break
+ */
 export const lineBreak: Def = {
   family: 'string',
   name: 'lineBreak',
   identifier: '\n'
 }
 
+/**
+ * Blocks
+ */
 export const blocks: Def[] = [
   {
     family: 'block',
@@ -201,6 +222,9 @@ export const blocks: Def[] = [
   }
 ]
 
+/**
+ * Operators
+ */
 export const operators: Def[] = [
   {
     family: 'operator',
@@ -544,6 +568,9 @@ export const operators: Def[] = [
   }
 ]
 
+/**
+ * Types
+ */
 export const types: Def[] = [
   {
     family: 'string',
@@ -682,6 +709,9 @@ export const types: Def[] = [
   }
 ]
 
+/**
+ * Keywords
+ */
 export const keywords: Def[] = [
   {
     family: 'string',
@@ -758,5 +788,16 @@ export const keywords: Def[] = [
     ejs: {
       spaceAfter: true
     }
+  }
+]
+
+/**
+ * Customs
+ */
+export const customs: Def[] = [
+  {
+    family: 'string',
+    name: 'custom',
+    identifier: '[]'
   }
 ]
