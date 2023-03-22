@@ -5,7 +5,7 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@airthium/typedoc-plugin-airthium@npm:^1.0.21":
+"@airthium/typedoc-plugin-airthium@npm:1.0.21":
   version: 1.0.21
   resolution: "@airthium/typedoc-plugin-airthium@npm:1.0.21"
   checksum: 30e4f05d9d3a53d83c1e68b5d46cd8d400bbae988ff91d966496f59d6939ced2953b9e4771d6a59680a21acedf1cc4311e421287c74f65bd690be5abc5d67533
@@ -3827,7 +3827,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": ^1.0.21
+    "@airthium/typedoc-plugin-airthium": 1.0.21
     "@types/jest": 29.5.0
     "@types/node": 18.15.3
     colors: 1.4.0
@@ -3835,7 +3835,7 @@ __metadata:
     jest: 29.5.0
     prettier: 2.8.6
     ts-jest: 29.0.5
-    typedoc: ^0.23.28
+    typedoc: 0.23.28
     typescript: 5.0.2
   languageName: unknown
   linkType: soft
@@ -3935,7 +3935,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.23.28":
+"typedoc@npm:0.23.28":
   version: 0.23.28
   resolution: "typedoc@npm:0.23.28"
   dependencies:
