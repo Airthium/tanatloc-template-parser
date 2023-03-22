@@ -1,4 +1,4 @@
-import colors from 'colors'
+import colors from 'colors/safe.js'
 
 import { NodeLR } from './typedef.js'
 

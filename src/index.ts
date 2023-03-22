@@ -9,7 +9,7 @@ const inputFile = process.argv[2]
 if (!inputFile) {
   console.error('You must specify an input file to parse')
   console.error('node index.js file.edp.ejs')
-  process.exit(-1)
+  throw new Error('No input file')
 }
 
 // Output file

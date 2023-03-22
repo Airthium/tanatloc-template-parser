@@ -8,5 +8,14 @@
 !.yarn/versions
 /node_modules
 
+# Src
+src/**/*.js
+
 # Lib
 /lib
+
+# Tests
+tests/assets/test1.jest.edp.ejs
+
+# Coverage
+coverage

@@ -1,0 +1,73 @@
+{
+    real i = 0;
+    mesh Th = square(10, 10, [ x, y ]);
+    fespace Uh(Th, P1);
+    Uh Ux, Uy;
+    
+<% const inline = true -%>
+<%
+    const multiline = 'multiline'
+%>
+    
+    {
+        {
+            {
+                int j = 1;
+                real value = int1d(Th)(Ux * Uy);
+            }
+        }
+    }
+}
+
+try {
+    real i = 0;
+    {
+        int j = 1;
+        real value = int1d(Th)(Ux * Uy);
+    }
+    varf myProblem([ Ux, Uy ], [ Uhy, Uhy ])
+        = int2d(Th)(
+            grad(U)' * grad(Uh)
+        )
+<% if (test){ -%>
+        + on(1, Ux = 0)
+<% } -%>
+        ;
+    
+    // Inline comment
+    for (int i = 0; i < 10; ++i) {
+        cout << i << endl; // Inline comment 2
+    }
+    
+    /*
+     * Some multiline
+     * comment
+     */
+    
+    real value0 = 3. * 4.;
+    real value = (i == 0) ? 0. : 10.;
+    real[int] test = [ 1, 2, 3 ];
+    
+    if (i == 0) {
+        cout << "i = 0" << endl;
+    } else if (i != 1) {
+        cout << "i != 1" << endl;
+    } else {
+        cout << "i unknown" << endl;
+    }
+    
+<%# EJS COMMENT -%>
+    
+    real Mu = E / (2. * (1. + Nu));
+    
+    u[] = A^-1 * B;
+    
+<%
+    let coucou = 'coucou'; let coucou2 = 'coucou2';
+    console.log(mesh.name)
+-%>
+<% const inline = true -%>
+    appendLog("End");
+} catch (...) {
+    cout << "error" << endl;
+}
