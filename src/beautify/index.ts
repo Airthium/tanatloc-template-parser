@@ -159,7 +159,6 @@ const traverseTree = (tree: NodeLR): void => {
  */
 export const beautify = (tree: Tree): TreeLR => {
   const treeLR = setLeftAndRight(tree)
-  // console.dir(tree, { depth: null })
 
   traverseTree(treeLR)
 

@@ -203,11 +203,15 @@ const parseString = (text: string): boolean => {
     const begin = text.slice(0, pos)
     const inString = text.slice(pos + 1)
 
-    parseLoop(begin)
+    // check correct close
+    const ejsClosePos = text.indexOf('%>')
 
     pos = inString.indexOf("'")
+    if (pos === -1 || (ejsClosePos !== -1 && ejsClosePos < pos)) return false
     const stringContent = inString.slice(0, pos)
     const end = inString.slice(pos + 1)
+
+    parseLoop(begin)
 
     appendChild(currentNode, {
       ...string,
