@@ -26,8 +26,8 @@ jobs:
       - name: Doc
         run: yarn doc
 
-      - name: Tests
-        run: yarn test
+      - name: Coverage
+        run: yarn coverage
 
       - name: Build
         run: yarn build
