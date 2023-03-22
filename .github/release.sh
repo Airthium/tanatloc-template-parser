@@ -36,7 +36,7 @@ check() {
 ## Merge
 merge() {
     git add .
-    git commit -m"$1" --allow-empty
+    git commit -m"[RELEASE] $1" --allow-empty
     git push
 
     git checkout hotfix
