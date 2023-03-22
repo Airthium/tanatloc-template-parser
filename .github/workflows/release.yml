@@ -26,15 +26,17 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@airthium'
       - name: Publish Github
-        run: yarn publish
+        continue-on-error: true
+        run: yarn npm publish --access=public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_PUBLISH_REGISTRY: 'https://npm.pkg.github.com'
 
       - uses: actions/setup-node@master
         with:
           registry-url: 'https://registry.npmjs.org'
           scope: '@airthium'
       - name: Publish NPM
-        run: yarn publish --access=public
+        run: yarn npm publish --access=public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
