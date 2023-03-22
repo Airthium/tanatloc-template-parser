@@ -6,6 +6,7 @@ jobs:
     name: Node
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    if: ${{ !contains(github.event.head_commit.message, '[RELEASE]') }}
 
     steps:
       - uses: actions/checkout@main
