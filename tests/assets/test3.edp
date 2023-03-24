@@ -1,0 +1,7 @@
+border b1(t=0, 1){x=0; y =2.; label = 1;}
+border b2(t=0, 1){x=0; y =2.; label = 1;}
+
+mesh Th = square(10,10);
+fespace Hh(Th,P0);
+Hh h = hTriangle;
+cout << h[].min << endl;

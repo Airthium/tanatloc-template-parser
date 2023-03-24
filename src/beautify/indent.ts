@@ -20,8 +20,6 @@ let currentEJSDepth = 0
 // Custom indent
 let customIndent: string[] | undefined = undefined
 
-// TODO keep normal indent for <%= ?
-
 /**
  * Set indent
  * @param node Node

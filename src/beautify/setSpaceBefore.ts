@@ -45,6 +45,14 @@ const setSpaceBeforeBlock = (node: NodeLR, inEJS: boolean): void => {
   }
 }
 
+const checkLeftBlock = (left?: NodeLR): NodeLR | undefined => {
+  if (left?.family === 'block') {
+    const children = left.children
+    left = children?.[children.length - 1]
+  }
+  return left
+}
+
 /**
  * Set space before
  * @param node Node
@@ -61,15 +69,15 @@ export const setSpaceBefore = (
     (inEJS && node.ejs?.spaceBefore) ||
     (!inEJS && node.freefem?.spaceBefore)
   ) {
+    if (node.value[0] === '.') return
+
     if (node.family === 'block') {
       setSpaceBeforeBlock(node, inEJS)
     } else {
       let left = node.left?.deref()
 
-      if (left?.family === 'block') {
-        const children = left.children
-        left = children?.[children.length - 1]
-      }
+      // Check if left is a block
+      left = checkLeftBlock(left)
 
       if (
         left &&

@@ -566,7 +566,7 @@ export const operators: Def[] = [
     name: 'dot',
     identifier: '.',
     freefem: {
-      skip: true
+      skip: true // Because of real numbers
     }
   }
 ]
