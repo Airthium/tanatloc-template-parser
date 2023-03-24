@@ -79,6 +79,11 @@ const indexOfMin = (array: number[]): number => {
   return minIndex
 }
 
+/**
+ * Index and position of min
+ * @param array Array
+ * @returns { index, pos }
+ */
 const indexAndPosOfMin = (array: number[]): { index: number; pos: number } => {
   if (array.length === 0) return { index: -1, pos: -1 }
 
@@ -97,11 +102,72 @@ const indexAndPosOfMin = (array: number[]): { index: number; pos: number } => {
 }
 
 /**
+ * Find first in words
+ * @param text Text
+ * @param defs Defs
+ * @returns Index
+ */
+const findFirstInWords = (text: string, defs: Def[]): number => {
+  const words = text.split(' ')
+
+  let ok = false
+  const positions = defs.map((def) => {
+    // Skip?
+    const params = inEJS ? def.ejs : def.freefem
+    if (params?.skip) return Number.MAX_SAFE_INTEGER
+
+    const pos = words.indexOf(def.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return -1
+
+  // Parse
+  return indexOfMin(positions)
+}
+
+/**
+ * Find first in text
+ * @param text Text
+ * @param defs Defs
+ * @returns { index, pos }
+ */
+const findFirstInText = (
+  text: string,
+  defs: Def[]
+): { index: number; pos: number } => {
+  let ok = false
+  const positions = defs.map((def) => {
+    // Skip?
+    const params = inEJS ? def.ejs : def.freefem
+    if (params?.skip) return Number.MAX_SAFE_INTEGER
+
+    const pos = text.indexOf(def.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return { index: -1, pos: -1 }
+
+  // Parse
+  return indexAndPosOfMin(positions)
+}
+
+/**
  * Parse inline comment
  * @param text Text
  */
 const parseInlineComment = (text: string): void => {
-  const pos = text.indexOf('//')
+  const pos = text.indexOf(inlineComment.identifier)
   const begin = text.slice(0, pos)
   const end = text.slice(pos)
 
@@ -180,7 +246,7 @@ const parseMultlineCommentClose = (text: string, ...next: string[]): void => {
  */
 const parseComment = (text: string, ...next: string[]): boolean => {
   // Inline comment
-  if (text.includes('//')) {
+  if (text.includes(inlineComment.identifier)) {
     parseInlineComment(text)
     return true
   }
@@ -277,21 +343,10 @@ const parseType = (text: string, ...next: string[]): boolean => {
   const words = text.split(' ')
 
   // Find first type identifier
-  let ok = false
-  const positions = types.map((type) => {
-    const pos = words.indexOf(type.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return false
+  const first = findFirstInWords(text, types)
+  if (first === -1) return false
 
   // Parse
-  const first = indexOfMin(positions)
   const type = types[first]
 
   const index = words.indexOf(type.identifier)
@@ -320,21 +375,10 @@ const parseKeyword = (text: string, ...next: string[]): boolean => {
   const words = text.split(' ')
 
   // Find first keyword identifier
-  let ok = false
-  const positions = keywords.map((keyword) => {
-    const pos = words.indexOf(keyword.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return false
+  const first = findFirstInWords(text, keywords)
+  if (first === -1) return false
 
   // Parse
-  const first = indexOfMin(positions)
   const keyword = keywords[first]
 
   const index = words.indexOf(keyword.identifier)
@@ -361,24 +405,13 @@ const parseKeyword = (text: string, ...next: string[]): boolean => {
  */
 const parseCustom = (text: string, ...next: string[]): boolean => {
   // Find first custom identifier
-  let ok = false
-  const positions = customs.map((custom) => {
-    const pos = text.indexOf(custom.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return false
+  const first = findFirstInText(text, customs)
+  if (first.index === -1) return false
 
   // Parse
-  const first = indexOfMin(positions)
-  const custom = customs[first]
+  const custom = customs[first.index]
 
-  const pos = positions[first]
+  const pos = first.pos
   const begin = text.slice(0, pos)
   const end = text.slice(pos + custom.identifier.length)
 
@@ -474,24 +507,13 @@ const parseBlockClose = (block: Def): void => {
  */
 const parseBlock = (text: string, ...next: string[]): boolean => {
   // Find first block identifier
-  let ok = false
-  const positions = blocks.map((block) => {
-    const pos = text.indexOf(block.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return false
+  const first = findFirstInText(text, blocks)
+  if (first.index === -1) return false
 
   // Parse
-  const first = indexOfMin(positions)
-  const block = blocks[first]
+  const block = blocks[first.index]
 
-  const pos = positions[first]
+  const pos = first.pos
   const begin = text.slice(0, pos)
   const end = text.slice(pos + block.identifier.length)
 
@@ -519,28 +541,13 @@ const parseBlock = (text: string, ...next: string[]): boolean => {
  */
 const parseOperator = (text: string, ...next: string[]): boolean => {
   // Find first operator identifier
-  let ok = false
-  const positions = operators.map((operator) => {
-    // Skip?
-    const params = inEJS ? operator.ejs : operator.freefem
-    if (params?.skip) return Number.MAX_SAFE_INTEGER
-
-    const pos = text.indexOf(operator.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return false
+  const first = findFirstInText(text, operators)
+  if (first.index === -1) return false
 
   // Parse
-  const first = indexOfMin(positions)
-  const operator = operators[first]
+  const operator = operators[first.index]
 
-  const pos = text.indexOf(operator.identifier)
+  const pos = first.pos
   const begin = text.slice(0, pos)
   const end = text.slice(pos + operator.identifier.length)
 
@@ -551,122 +558,6 @@ const parseOperator = (text: string, ...next: string[]): boolean => {
   parseLoop(end, ...next)
 
   return true
-}
-
-const findFirstInWords = (text: string, defs: Def[]) => {
-  const words = text.split(' ')
-
-  let ok = false
-  const positions = defs.map((def) => {
-    // Skip?
-    const params = inEJS ? def.ejs : def.freefem
-    if (params?.skip) return Number.MAX_SAFE_INTEGER
-
-    const pos = words.indexOf(def.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return { index: -1, pos: -1 }
-
-  // Parse
-  return indexAndPosOfMin(positions)
-}
-
-const findFirstInText = (text: string, defs: Def[]) => {
-  let ok = false
-  const positions = defs.map((def) => {
-    // Skip?
-    const params = inEJS ? def.ejs : def.freefem
-    if (params?.skip) return Number.MAX_SAFE_INTEGER
-
-    const pos = text.indexOf(def.identifier)
-    if (pos === -1) {
-      return Number.MAX_SAFE_INTEGER
-    } else {
-      ok = true
-      return pos
-    }
-  })
-
-  if (!ok) return { index: -1, pos: -1 }
-
-  // Parse
-  return indexAndPosOfMin(positions)
-}
-
-const parseKnown = (text: string, ...next: string[]): boolean => {
-  if (inMultilineComment) {
-    parseComment(text)
-    return true
-  }
-
-  // Find first
-  const inlineCommentPos = findFirstInText(text, [inlineComment])
-  const multilineCommentPos = findFirstInText(text, [multilineComment[0]])
-  const typePos = findFirstInWords(text, types)
-  const keywordPos = findFirstInWords(text, keywords)
-  const customPos = findFirstInText(text, customs)
-  const blockPos = findFirstInText(text, blocks)
-  const operatorPos = findFirstInText(text, operators)
-
-  const positions = [
-    {
-      ...inlineComment,
-      ...inlineCommentPos
-    },
-    {
-      ...multilineComment[0],
-      ...multilineCommentPos
-    },
-    {
-      ...types[typePos.index],
-      ...typePos
-    },
-    {
-      ...keywords[keywordPos.index],
-      ...keywordPos
-    },
-    {
-      ...customs[customPos.index],
-      ...customPos
-    },
-    {
-      ...blocks[blockPos.index],
-      ...blockPos
-    },
-    {
-      ...operators[operatorPos.index],
-      ...operatorPos
-    }
-  ]
-
-  const first = positions
-    .filter((pos) => pos.index !== -1)
-    .sort((a, b) => a.pos - b.pos)[0]
-
-  if (!first) return false
-
-  switch (first.family) {
-    case 'comment':
-      return parseComment(text, ...next)
-    case 'string':
-      if (first.name === 'string') return parseString(text, ...next)
-      else if (first.name === 'type') return parseType(text, ...next)
-      else if (first.name === 'keyword') return parseKeyword(text, ...next)
-      else if (first.name === 'custom') return parseCustom(text, ...next)
-      else return false
-    case 'block':
-      return parseBlock(text, ...next)
-    case 'operator':
-      return parseOperator(text, ...next)
-    default:
-      return false
-  }
 }
 
 /**
@@ -680,7 +571,6 @@ const parseLoop = (text: string, ...next: string[]): void => {
   text = text.trim()
 
   if (
-    // !parseKnown(text, ...next)
     !parseComment(text, ...next) && // Comments
     !parseString(text, ...next) && // String
     !parseType(text, ...next) && // Types

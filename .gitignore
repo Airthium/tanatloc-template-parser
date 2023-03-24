@@ -18,7 +18,7 @@ src/**/*.js
 /doc
 
 # Tests
-/tests/assets/test1.jest.edp.ejs
+/tests/assets/*.jest.edp.ejs
 
 # Coverage
 /coverage

@@ -58,7 +58,8 @@ export const setSpaceAfter = (
       if (
         right?.name !== 'lineBreak' &&
         right?.name !== 'space' &&
-        right?.name !== 'indent'
+        right?.name !== 'indent' &&
+        !(right?.family === 'block' && right?.dir === -1)
       ) {
         const rightChild = {
           ...space,
