@@ -19,7 +19,7 @@ const printCode = (code: string): void => {
   for (let i = 0; i < length; ++i) {
     const line = lines[i]
     const lineNumber = ' '.repeat(maxCharLenght) + i
-    console.log(
+    console.info(
       colors.gray(
         lineNumber.substring(lineNumber.length - maxCharLenght) + ':'
       ),

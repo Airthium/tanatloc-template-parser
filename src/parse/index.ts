@@ -211,7 +211,7 @@ const parseString = (text: string): boolean => {
     const stringContent = inString.slice(0, pos)
     const end = inString.slice(pos + 1)
 
-    parseLoop(begin)
+    parseLoop(begin, inString)
 
     appendChild(currentNode, {
       ...string,
@@ -254,26 +254,39 @@ const parseString = (text: string): boolean => {
  */
 const parseType = (text: string): boolean => {
   const words = text.split(' ')
-  for (const type of types) {
-    if (words.includes(type.identifier)) {
-      const index = words.indexOf(type.identifier)
-      const begin = words.slice(0, index).join(' ')
-      const end = words.slice(index + 1).join(' ')
 
-      parseLoop(begin, end)
-
-      appendChild(currentNode, {
-        ...type,
-        value: type.identifier
-      })
-
-      parseLoop(end)
-
-      return true
+  // Find first type identifier
+  let ok = false
+  const positions = types.map((type) => {
+    const pos = words.indexOf(type.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
     }
-  }
+  })
 
-  return false
+  if (!ok) return false
+
+  // Parse
+  const first = indexOfMin(positions)
+  const type = types[first]
+
+  const index = words.indexOf(type.identifier)
+  const begin = words.slice(0, index).join(' ')
+  const end = words.slice(index + 1).join(' ')
+
+  parseLoop(begin, end)
+
+  appendChild(currentNode, {
+    ...type,
+    value: type.identifier
+  })
+
+  parseLoop(end)
+
+  return true
 }
 
 /**
@@ -283,26 +296,39 @@ const parseType = (text: string): boolean => {
  */
 const parseKeyword = (text: string): boolean => {
   const words = text.split(' ')
-  for (const keyword of keywords) {
-    if (words.includes(keyword.identifier)) {
-      const index = words.indexOf(keyword.identifier)
-      const begin = words.slice(0, index).join(' ')
-      const end = words.slice(index + 1).join(' ')
 
-      parseLoop(begin, end)
-
-      appendChild(currentNode, {
-        ...keyword,
-        value: keyword.identifier
-      })
-
-      parseLoop(end)
-
-      return true
+  // Find first keyword identifier
+  let ok = false
+  const positions = keywords.map((keyword) => {
+    const pos = words.indexOf(keyword.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
     }
-  }
+  })
 
-  return false
+  if (!ok) return false
+
+  // Parse
+  const first = indexOfMin(positions)
+  const keyword = keywords[first]
+
+  const index = words.indexOf(keyword.identifier)
+  const begin = words.slice(0, index).join(' ')
+  const end = words.slice(index + 1).join(' ')
+
+  parseLoop(begin, end)
+
+  appendChild(currentNode, {
+    ...keyword,
+    value: keyword.identifier
+  })
+
+  parseLoop(end)
+
+  return true
 }
 
 /**
@@ -333,7 +359,7 @@ const parseCustom = (text: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + custom.identifier.length)
 
-  parseLoop(begin)
+  parseLoop(begin, end)
 
   appendChild(currentNode, {
     ...custom,
@@ -446,7 +472,7 @@ const parseBlock = (text: string, next?: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + block.identifier.length)
 
-  parseLoop(begin)
+  parseLoop(begin, next)
 
   if (block.enableEJS) inEJS = true
   if (block.disableEJS) inEJS = false
@@ -494,7 +520,7 @@ const parseOperator = (text: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + operator.identifier.length)
 
-  parseLoop(begin)
+  parseLoop(begin, end)
 
   appendChild(currentNode, { ...operator, value: operator.identifier })
 

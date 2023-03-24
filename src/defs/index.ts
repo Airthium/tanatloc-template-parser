@@ -193,6 +193,7 @@ export const blocks: Def[] = [
     closeIdentifiers: ['-%>', '%>'],
     dir: 1,
     ejs: {
+      spaceBefore: true,
       spaceAfter: true,
       lineBreakAfter: true,
       indent: true,
