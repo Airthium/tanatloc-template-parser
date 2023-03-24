@@ -277,6 +277,35 @@ const parseComment = (text: string, ...next: string[]): boolean => {
 }
 
 /**
+ * Parse number
+ * @param text Text
+ * @param next Next
+ * @returns Parsed?
+ */
+const parseNumber = (text: string, ...next: string[]): boolean => {
+  let found = text.match(/[\d+\.?]+e-[\d+\.?]+/)
+  if (found) {
+    const num = found[0]
+    const pos = text.indexOf(num)
+    const begin = text.slice(0, pos)
+    const end = text.slice(pos + num.length)
+
+    parseLoop(begin, end, ...next)
+
+    appendChild(currentNode, {
+      ...string,
+      value: found[0]
+    })
+
+    parseLoop(end, ...next)
+
+    return true
+  }
+
+  return false
+}
+
+/**
  * Parse string
  * @param text Text
  * @param next Next
@@ -572,6 +601,7 @@ const parseLoop = (text: string, ...next: string[]): void => {
 
   if (
     !parseComment(text, ...next) && // Comments
+    !parseNumber(text, ...next) && //Number
     !parseString(text, ...next) && // String
     !parseType(text, ...next) && // Types
     !parseKeyword(text, ...next) && // Keyword

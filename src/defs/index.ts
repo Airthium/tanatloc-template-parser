@@ -110,7 +110,6 @@ export const blocks: Def[] = [
     closeIdentifiers: [']'],
     dir: 1,
     freefem: {
-      spaceAfter: true,
       indent: true,
       keepInline: true
     },
@@ -124,7 +123,6 @@ export const blocks: Def[] = [
     identifier: ']',
     dir: -1,
     freefem: {
-      spaceBefore: true,
       keepInline: true
     },
     ejs: {
@@ -159,6 +157,7 @@ export const blocks: Def[] = [
     closeIdentifiers: ['-%>', '%>'],
     dir: 1,
     ejs: {
+      spaceBefore: true,
       spaceAfter: true
     },
     enableEJS: true
@@ -181,6 +180,7 @@ export const blocks: Def[] = [
     closeIdentifiers: ['-%>', '%>'],
     dir: 1,
     ejs: {
+      spaceBefore: true,
       spaceAfter: true,
       keepInline: true
     },
@@ -234,6 +234,32 @@ export const operators: Def[] = [
     name: 'pow-1',
     identifier: '^-1',
     freefem: {
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'or',
+    identifier: '||',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
+      spaceAfter: true
+    }
+  },
+  {
+    family: 'operator',
+    name: 'and',
+    identifier: '&&',
+    freefem: {
+      spaceBefore: true,
+      spaceAfter: true
+    },
+    ejs: {
+      spaceBefore: true,
       spaceAfter: true
     }
   },

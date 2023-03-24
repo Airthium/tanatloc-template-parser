@@ -1,6 +1,6 @@
 {
     real i = 0;
-    mesh Th = square(10, 10, [ x, y ]);
+    mesh Th = square(10, 10, [x, y]);
     fespace Uh(Th, P1);
     Uh Ux, Uy;
     
@@ -25,7 +25,7 @@ try {
         int j = 1;
         real value = int1d(Th)(Ux * Uy);
     }
-    varf myProblem([ Ux, Uy ], [ Uhy, Uhy ])
+    varf myProblem([Ux, Uy], [Uhy, Uhy])
         = int2d(Th)(
             grad(U)' * grad(Uh)
         )
@@ -46,7 +46,7 @@ try {
     
     real value0 = 3. * 4.;
     real value = (i == 0) ? 0. : 10.;
-    real[int] test = [ 1, 2, 3 ];
+    real[int] test = [1, 2, 3];
     
     if (i == 0) {
         cout << "i = 0" << endl;
