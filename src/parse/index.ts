@@ -65,8 +65,8 @@ const appendChild = (node: Node, child: Omit<Node, 'parent'>): Node => {
 const indexOfMin = (array: number[]): number => {
   if (array.length === 0) return -1
 
-  let min = array[0]
-  let minIndex = 0
+  let min = Number.MAX_SAFE_INTEGER
+  let minIndex = -1
 
   for (let i = 0; i < array.length; ++i) {
     const localMin = array[i]
@@ -77,6 +77,23 @@ const indexOfMin = (array: number[]): number => {
   }
 
   return minIndex
+}
+
+const indexAndPosOfMin = (array: number[]): { index: number; pos: number } => {
+  if (array.length === 0) return { index: -1, pos: -1 }
+
+  let min = Number.MAX_SAFE_INTEGER
+  let minIndex = -1
+
+  for (let i = 0; i < array.length; ++i) {
+    const localMin = array[i]
+    if (localMin < min) {
+      minIndex = i
+      min = localMin
+    }
+  }
+
+  return { index: minIndex, pos: min }
 }
 
 /**
@@ -127,8 +144,9 @@ const parseMultlineCommentOpen = (text: string): void => {
 /**
  * Parse multline comment close
  * @param text Text
+ * @param next Next
  */
-const parseMultlineCommentClose = (text: string): void => {
+const parseMultlineCommentClose = (text: string, ...next: string[]): void => {
   const closeBlock = multilineComment[1]
   const close = closeBlock.identifier
 
@@ -151,15 +169,16 @@ const parseMultlineCommentClose = (text: string): void => {
   currentNode = currentNode.parent.deref()!
   inMultilineComment = false
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 }
 
 /**
  * Parse comment
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseComment = (text: string): boolean => {
+const parseComment = (text: string, ...next: string[]): boolean => {
   // Inline comment
   if (text.includes('//')) {
     parseInlineComment(text)
@@ -171,7 +190,7 @@ const parseComment = (text: string): boolean => {
   const close = multilineComment[1].identifier
   if (inMultilineComment) {
     if (text.includes(close)) {
-      parseMultlineCommentClose(text)
+      parseMultlineCommentClose(text, ...next)
       return true
     } else {
       appendChild(currentNode, {
@@ -194,9 +213,10 @@ const parseComment = (text: string): boolean => {
 /**
  * Parse string
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseString = (text: string): boolean => {
+const parseString = (text: string, ...next: string[]): boolean => {
   // Do not consider ' as an operator in EJS
   if (inEJS && text.includes("'")) {
     let pos = text.indexOf("'")
@@ -211,14 +231,14 @@ const parseString = (text: string): boolean => {
     const stringContent = inString.slice(0, pos)
     const end = inString.slice(pos + 1)
 
-    parseLoop(begin, inString)
+    parseLoop(begin, inString, ...next)
 
     appendChild(currentNode, {
       ...string,
       value: "'" + stringContent + "'"
     })
 
-    parseLoop(end)
+    parseLoop(end, ...next)
 
     return true
   }
@@ -228,7 +248,7 @@ const parseString = (text: string): boolean => {
     const begin = text.slice(0, pos)
     const inString = text.slice(pos + 1)
 
-    parseLoop(begin, inString)
+    parseLoop(begin, inString, ...next)
 
     pos = inString.indexOf('"')
     const stringContent = inString.slice(0, pos)
@@ -239,7 +259,7 @@ const parseString = (text: string): boolean => {
       value: '"' + stringContent + '"'
     })
 
-    parseLoop(end)
+    parseLoop(end, ...next)
 
     return true
   }
@@ -250,9 +270,10 @@ const parseString = (text: string): boolean => {
 /**
  * Parse type
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseType = (text: string): boolean => {
+const parseType = (text: string, ...next: string[]): boolean => {
   const words = text.split(' ')
 
   // Find first type identifier
@@ -277,14 +298,14 @@ const parseType = (text: string): boolean => {
   const begin = words.slice(0, index).join(' ')
   const end = words.slice(index + 1).join(' ')
 
-  parseLoop(begin, end)
+  parseLoop(begin, end, ...next)
 
   appendChild(currentNode, {
     ...type,
     value: type.identifier
   })
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 
   return true
 }
@@ -292,9 +313,10 @@ const parseType = (text: string): boolean => {
 /**
  * Parse keyword
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseKeyword = (text: string): boolean => {
+const parseKeyword = (text: string, ...next: string[]): boolean => {
   const words = text.split(' ')
 
   // Find first keyword identifier
@@ -319,14 +341,14 @@ const parseKeyword = (text: string): boolean => {
   const begin = words.slice(0, index).join(' ')
   const end = words.slice(index + 1).join(' ')
 
-  parseLoop(begin, end)
+  parseLoop(begin, end, ...next)
 
   appendChild(currentNode, {
     ...keyword,
     value: keyword.identifier
   })
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 
   return true
 }
@@ -334,9 +356,10 @@ const parseKeyword = (text: string): boolean => {
 /**
  * Parse custom
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseCustom = (text: string): boolean => {
+const parseCustom = (text: string, ...next: string[]): boolean => {
   // Find first custom identifier
   let ok = false
   const positions = customs.map((custom) => {
@@ -359,14 +382,14 @@ const parseCustom = (text: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + custom.identifier.length)
 
-  parseLoop(begin, end)
+  parseLoop(begin, end, ...next)
 
   appendChild(currentNode, {
     ...custom,
     value: custom.identifier
   })
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 
   return true
 }
@@ -399,14 +422,14 @@ const getIndices = (text: string, separator: string): number[] => {
  * @param text Text
  * @param next Next
  */
-const parseBlockOpen = (block: Def, text: string, next?: string): void => {
+const parseBlockOpen = (block: Def, text: string, ...next: string[]): void => {
   // Check inline
   let inline = false
   let opens = getIndices(text, block.identifier)
   let closes: number[] = []
   block.closeIdentifiers?.forEach((closeIdentifier) => {
     const localCloses = getIndices(text, closeIdentifier)
-    const nextCloses = next ? getIndices(next, closeIdentifier) : []
+    const nextCloses = next?.map((n) => getIndices(n, closeIdentifier)).flat()
     closes = [...localCloses, ...nextCloses]
   })
   closes.sort((a, b) => a - b)
@@ -449,7 +472,7 @@ const parseBlockClose = (block: Def): void => {
  * @param next Next
  * @returns Parsed?
  */
-const parseBlock = (text: string, next?: string): boolean => {
+const parseBlock = (text: string, ...next: string[]): boolean => {
   // Find first block identifier
   let ok = false
   const positions = blocks.map((block) => {
@@ -472,18 +495,18 @@ const parseBlock = (text: string, next?: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + block.identifier.length)
 
-  parseLoop(begin, next)
+  parseLoop(begin, ...next)
 
   if (block.enableEJS) inEJS = true
   if (block.disableEJS) inEJS = false
 
   if (block.dir === 1) {
-    parseBlockOpen(block, end, next)
+    parseBlockOpen(block, end, ...next)
   } else {
     parseBlockClose(block)
   }
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 
   return true
 }
@@ -491,9 +514,10 @@ const parseBlock = (text: string, next?: string): boolean => {
 /**
  * Parse operators
  * @param text Text
+ * @param next Next
  * @returns Parsed?
  */
-const parseOperator = (text: string): boolean => {
+const parseOperator = (text: string, ...next: string[]): boolean => {
   // Find first operator identifier
   let ok = false
   const positions = operators.map((operator) => {
@@ -520,13 +544,129 @@ const parseOperator = (text: string): boolean => {
   const begin = text.slice(0, pos)
   const end = text.slice(pos + operator.identifier.length)
 
-  parseLoop(begin, end)
+  parseLoop(begin, end, ...next)
 
   appendChild(currentNode, { ...operator, value: operator.identifier })
 
-  parseLoop(end)
+  parseLoop(end, ...next)
 
   return true
+}
+
+const findFirstInWords = (text: string, defs: Def[]) => {
+  const words = text.split(' ')
+
+  let ok = false
+  const positions = defs.map((def) => {
+    // Skip?
+    const params = inEJS ? def.ejs : def.freefem
+    if (params?.skip) return Number.MAX_SAFE_INTEGER
+
+    const pos = words.indexOf(def.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return { index: -1, pos: -1 }
+
+  // Parse
+  return indexAndPosOfMin(positions)
+}
+
+const findFirstInText = (text: string, defs: Def[]) => {
+  let ok = false
+  const positions = defs.map((def) => {
+    // Skip?
+    const params = inEJS ? def.ejs : def.freefem
+    if (params?.skip) return Number.MAX_SAFE_INTEGER
+
+    const pos = text.indexOf(def.identifier)
+    if (pos === -1) {
+      return Number.MAX_SAFE_INTEGER
+    } else {
+      ok = true
+      return pos
+    }
+  })
+
+  if (!ok) return { index: -1, pos: -1 }
+
+  // Parse
+  return indexAndPosOfMin(positions)
+}
+
+const parseKnown = (text: string, ...next: string[]): boolean => {
+  if (inMultilineComment) {
+    parseComment(text)
+    return true
+  }
+
+  // Find first
+  const inlineCommentPos = findFirstInText(text, [inlineComment])
+  const multilineCommentPos = findFirstInText(text, [multilineComment[0]])
+  const typePos = findFirstInWords(text, types)
+  const keywordPos = findFirstInWords(text, keywords)
+  const customPos = findFirstInText(text, customs)
+  const blockPos = findFirstInText(text, blocks)
+  const operatorPos = findFirstInText(text, operators)
+
+  const positions = [
+    {
+      ...inlineComment,
+      ...inlineCommentPos
+    },
+    {
+      ...multilineComment[0],
+      ...multilineCommentPos
+    },
+    {
+      ...types[typePos.index],
+      ...typePos
+    },
+    {
+      ...keywords[keywordPos.index],
+      ...keywordPos
+    },
+    {
+      ...customs[customPos.index],
+      ...customPos
+    },
+    {
+      ...blocks[blockPos.index],
+      ...blockPos
+    },
+    {
+      ...operators[operatorPos.index],
+      ...operatorPos
+    }
+  ]
+
+  const first = positions
+    .filter((pos) => pos.index !== -1)
+    .sort((a, b) => a.pos - b.pos)[0]
+
+  if (!first) return false
+
+  switch (first.family) {
+    case 'comment':
+      return parseComment(text, ...next)
+    case 'string':
+      if (first.name === 'string') return parseString(text, ...next)
+      else if (first.name === 'type') return parseType(text, ...next)
+      else if (first.name === 'keyword') return parseKeyword(text, ...next)
+      else if (first.name === 'custom') return parseCustom(text, ...next)
+      else return false
+    case 'block':
+      return parseBlock(text, ...next)
+    case 'operator':
+      return parseOperator(text, ...next)
+    default:
+      return false
+  }
 }
 
 /**
@@ -534,19 +674,20 @@ const parseOperator = (text: string): boolean => {
  * @param text Text
  * @param next Next
  */
-const parseLoop = (text: string, next?: string): void => {
+const parseLoop = (text: string, ...next: string[]): void => {
   if (!text) return
 
   text = text.trim()
 
   if (
-    !parseComment(text) && // Comments
-    !parseString(text) && // String
-    !parseType(text) && // Types
-    !parseKeyword(text) && // Keyword
-    !parseCustom(text) && // Custom
-    !parseBlock(text, next) && // Blocks
-    !parseOperator(text) // Operators
+    // !parseKnown(text, ...next)
+    !parseComment(text, ...next) && // Comments
+    !parseString(text, ...next) && // String
+    !parseType(text, ...next) && // Types
+    !parseKeyword(text, ...next) && // Keyword
+    !parseCustom(text, ...next) && // Custom
+    !parseBlock(text, ...next) && // Blocks
+    !parseOperator(text, ...next) // Operators
   ) {
     // Rest
     const values = text.split(' ')
