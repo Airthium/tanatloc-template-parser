@@ -27,6 +27,7 @@ merge() {
 
 ## Check
 check() {
+    rm yarn.lock
     ./.github/workflows/node.sh
 }
 
@@ -47,10 +48,14 @@ release() {
     echo $PACKAGE_NEW_VERSION
 
     # New package.json version
-    jq ".version=\"${PACKAGE_NEW_VERSION}\"" package.json >package.json
+    jq ".version=\"${PACKAGE_NEW_VERSION}\"" package.json >/tmp/package.json
+    mv /tmp/package.json package.json
 
     # release
     ./.github/release.sh $PACKAGE_NEW_VERSION
 }
 
+checkBranch
+merge
+check
 release
