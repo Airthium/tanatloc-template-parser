@@ -600,9 +600,9 @@ const parseLoop = (text: string, ...next: string[]): void => {
   text = text.trim()
 
   if (
+    !parseString(text, ...next) && // String
     !parseComment(text, ...next) && // Comments
     !parseNumber(text, ...next) && //Number
-    !parseString(text, ...next) && // String
     !parseType(text, ...next) && // Types
     !parseKeyword(text, ...next) && // Keyword
     !parseCustom(text, ...next) && // Custom
