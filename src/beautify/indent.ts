@@ -163,7 +163,7 @@ const decreaseDepth = (node: NodeLR): void => {
  * @param node Node
  */
 const updateDepth = (node: NodeLR) => {
-  if (customIndent && customIndent.includes(node.identifier)) {
+  if (customIndent?.includes(node.identifier)) {
     unsetCustomIndent()
   } else {
     const dir = node.dir

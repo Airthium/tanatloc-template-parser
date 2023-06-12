@@ -51,7 +51,7 @@ const appendChild = (node: Node, child: Omit<Node, 'parent'>): Node => {
     ...child,
     parent: setRef(node)!
   }
-  node.children = [...(node.children || []), newChild]
+  node.children = [...(node.children ?? []), newChild]
 
   return newChild
 }
@@ -283,7 +283,7 @@ const parseComment = (text: string, ...next: string[]): boolean => {
  * @returns Parsed?
  */
 const parseNumber = (text: string, ...next: string[]): boolean => {
-  let found = text.match(/[\d+\.?]+e-[\d+\.?]+/)
+  let found = /[\d+.?]+e-[\d+.?]+/.exec(text)
   if (found) {
     const num = found[0]
     const pos = text.indexOf(num)
@@ -624,7 +624,7 @@ const parseLoop = (text: string, ...next: string[]): void => {
     positions.push({ index: -1, pos: -1 })
   }
   // Number (3)
-  const found = text.match(/[\d+\.?]+e-[\d+\.?]+/)
+  const found = /[\d+.?]+e-[\d+.?]+/.exec(text)
   if (found) {
     const num = found[0]
     const pos = text.indexOf(num)

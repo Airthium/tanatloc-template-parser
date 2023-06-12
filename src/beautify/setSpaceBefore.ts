@@ -69,7 +69,7 @@ export const setSpaceBefore = (
     (inEJS && node.ejs?.spaceBefore) ||
     (!inEJS && node.freefem?.spaceBefore)
   ) {
-    if (node.value[0] === '.') return
+    if (node.value.startsWith('.')) return
 
     if (node.family === 'block') {
       setSpaceBeforeBlock(node, inEJS)
