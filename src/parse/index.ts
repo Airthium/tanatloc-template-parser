@@ -346,6 +346,15 @@ const parseString = (text: string, ...next: string[]): boolean => {
     parseLoop(begin, inString, ...next)
 
     pos = inString.indexOf('"')
+    // Check \" in string
+    let pos2 = 1
+    while (pos2 !== -1) {
+      pos2 = inString.indexOf('\\"', pos - 1)
+      if (pos2 === -1) break
+
+      if (pos2 === pos - 1) pos = inString.indexOf('"', pos + 1)
+      else pos2 = -1
+    }
     const stringContent = inString.slice(0, pos)
     const end = inString.slice(pos + 1)
 
@@ -599,26 +608,90 @@ const parseLoop = (text: string, ...next: string[]): void => {
 
   text = text.trim()
 
-  if (
-    !parseString(text, ...next) && // String
-    !parseComment(text, ...next) && // Comments
-    !parseNumber(text, ...next) && //Number
-    !parseType(text, ...next) && // Types
-    !parseKeyword(text, ...next) && // Keyword
-    !parseCustom(text, ...next) && // Custom
-    !parseBlock(text, ...next) && // Blocks
-    !parseOperator(text, ...next) // Operators
-  ) {
-    // Rest
-    const values = text.split(' ')
+  // Find first occurence
+  const positions = []
+  // Comments (0&1)
+  positions.push(findFirstInText(text, [inlineComment]))
+  positions.push(findFirstInText(text, multilineComment))
+  // String (2)
+  if (inEJS && text.includes("'")) {
+    const pos = text.indexOf("'")
+    positions.push({ index: -1, pos })
+  } else if (text.includes('"')) {
+    const pos = text.indexOf('"')
+    positions.push({ index: -1, pos })
+  } else {
+    positions.push({ index: -1, pos: -1 })
+  }
+  // Number (3)
+  const found = text.match(/[\d+\.?]+e-[\d+\.?]+/)
+  if (found) {
+    const num = found[0]
+    const pos = text.indexOf(num)
+    positions.push({ index: -1, pos })
+  } else {
+    positions.push({ index: -1, pos: -1 })
+  }
+  // Types (4)
+  positions.push({ index: -1, pos: findFirstInWords(text, types) })
+  // Keywords (5)
+  positions.push({ index: -1, pos: findFirstInWords(text, keywords) })
+  // Customs (6)
+  positions.push(findFirstInText(text, customs))
+  // Blocks (7)
+  positions.push(findFirstInText(text, blocks))
+  // Operators (8)
+  positions.push(findFirstInText(text, operators))
 
-    for (const value of values) {
-      if (value)
-        appendChild(currentNode, {
-          ...string,
-          value
-        })
+  const min: { index: number; pos: number } = {
+    index: -1,
+    pos: Number.MAX_SAFE_INTEGER
+  }
+  positions.forEach((position, index) => {
+    if (position.pos !== -1 && position.pos < min.pos) {
+      min.pos = position.pos
+      min.index = index
     }
+  })
+
+  switch (min.index) {
+    case 0:
+    case 1:
+      parseComment(text, ...next)
+      break
+    case 2:
+      parseString(text, ...next)
+      break
+    case 3:
+      parseNumber(text, ...next)
+      break
+    case 4:
+      parseType(text, ...next)
+      break
+    case 5:
+      parseKeyword(text, ...next)
+      break
+    case 6:
+      parseCustom(text, ...next)
+      break
+    case 7:
+      parseBlock(text, ...next)
+      break
+    case 8:
+      parseOperator(text, ...next)
+      break
+    default:
+      // Rest
+      const values = text.split(' ')
+
+      for (const value of values) {
+        if (value)
+          appendChild(currentNode, {
+            ...string,
+            value
+          })
+      }
+      break
   }
 }
 
