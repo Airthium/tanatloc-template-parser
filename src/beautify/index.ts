@@ -92,13 +92,15 @@ const beautifyComment = (node: NodeLR): void => {
     node.value = '// ' + comment
   } else {
     if (node.dir! > 0) {
-      node.children
-        ?.filter((c) => c.value)
-        .forEach((c) => {
-          if (c.name === 'lineBreak') return
-          else if (c.name === multilineComment[1].name) c.value = ' ' + c.value
-          else c.value = ' * ' + c.value
-        })
+      const children = node.children?.filter((c) => c.value)
+      children?.forEach((child, index) => {
+        if (child.name === 'lineBreak') return
+        else if (child.name === multilineComment[1].name)
+          child.value = ' ' + child.value
+        else if (children[index - 1]?.name === 'lineBreak')
+          child.value = ' * ' + child.value
+      })
+      node.children = children
 
       traverseTree(node)
     }
