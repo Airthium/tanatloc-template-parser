@@ -9,8 +9,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": 1.1.8
-    "@types/jest": 29.5.2
+    "@airthium/typedoc-plugin-airthium": 1.1.9
+    "@types/jest": 29.5.3
     "@types/node": 18.16.19
     colors: 1.4.0
     depcheck: 1.4.3
@@ -22,10 +22,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.8":
-  version: 1.1.8
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.8"
-  checksum: 1046c97dd8ab86b9947cde51af90a593dad3ac63a5e19039d3a3d3615446ff851a3c1b7e93d2f76e8ef228a714a7be4d1577dd44c96ae7f14505f61621f79dba
+"@airthium/typedoc-plugin-airthium@npm:1.1.9":
+  version: 1.1.9
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.9"
+  checksum: 4cc1242d53c966ccd6b3b741e5c931790ba96ea4450da829947e1694246bdc239f2c7b6800b79238272b1e5ef97b0da9b07cd4aba256a42c16e47fb7a9b46c5c
   languageName: node
   linkType: hard
 
@@ -888,13 +888,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.2":
-  version: 29.5.2
-  resolution: "@types/jest@npm:29.5.2"
+"@types/jest@npm:29.5.3":
+  version: 29.5.3
+  resolution: "@types/jest@npm:29.5.3"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 7d205599ea3cccc262bad5cc173d3242d6bf8138c99458509230e4ecef07a52d6ddcde5a1dbd49ace655c0af51d2dbadef3748697292ea4d86da19d9e03e19c0
+  checksum: e36bb92e0b9e5ea7d6f8832baa42f087fc1697f6cd30ec309a07ea4c268e06ec460f1f0cfd2581daf5eff5763475190ec1ad8ac6520c49ccfe4f5c0a48bfa676
   languageName: node
   linkType: hard
 
