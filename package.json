@@ -9,7 +9,7 @@
     "url": "https://github.com/orgs/Airthium/people"
   },
   "license": "AGPL3+",
-  "packageManager": "yarn@3.6.2",
+  "packageManager": "yarn@3.6.3",
   "scripts": {
     "depcheck": "depcheck --ignores ts-jest,@types/jest,@airthium/typedoc-plugin-airthium",
     "prettier": "prettier -l '**/*.{js,jsx,ts,tsx,json,md,css}'",
@@ -21,16 +21,16 @@
   },
   "dependencies": {
     "colors": "1.4.0",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "devDependencies": {
-    "@airthium/typedoc-plugin-airthium": "1.1.9",
-    "@types/jest": "29.5.3",
-    "@types/node": "18.17.6",
-    "depcheck": "1.4.3",
-    "jest": "29.6.2",
+    "@airthium/typedoc-plugin-airthium": "1.1.10",
+    "@types/jest": "29.5.4",
+    "@types/node": "18.17.12",
+    "depcheck": "1.4.5",
+    "jest": "29.6.4",
     "prettier": "3.0.2",
     "ts-jest": "29.1.1",
-    "typedoc": "0.24.8"
+    "typedoc": "0.25.0"
   }
 }
