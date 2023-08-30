@@ -265,12 +265,10 @@ const parseComment = (text: string, ...next: string[]): boolean => {
       })
       return true
     }
-  } else {
+  } else if (text.includes(open)) {
     // Multiline comment
-    if (text.includes(open)) {
-      parseMultlineCommentOpen(text)
-      return true
-    }
+    parseMultlineCommentOpen(text)
+    return true
   }
 
   return false
@@ -306,6 +304,73 @@ const parseNumber = (text: string, ...next: string[]): boolean => {
 }
 
 /**
+ * Process single quote string
+ * @param text Text
+ * @param next Next
+ * @returns Parsed?
+ */
+const processSingleQuoteString = (text: string, ...next: string[]): boolean => {
+  let pos = text.indexOf("'")
+  const begin = text.slice(0, pos)
+  const inString = text.slice(pos + 1)
+
+  // check correct close
+  const ejsClosePos = text.indexOf('%>')
+
+  pos = inString.indexOf("'")
+  if (pos === -1 || (ejsClosePos !== -1 && ejsClosePos < pos)) return false
+  const stringContent = inString.slice(0, pos)
+  const end = inString.slice(pos + 1)
+
+  parseLoop(begin, inString, ...next)
+
+  appendChild(currentNode, {
+    ...string,
+    value: "'" + stringContent + "'"
+  })
+
+  parseLoop(end, ...next)
+
+  return true
+}
+
+/**
+ * Process double quote string
+ * @param text Text
+ * @param next Next
+ * @returns Parsed?
+ */
+const processDoubleQuoteString = (text: string, ...next: string[]): boolean => {
+  let pos = text.indexOf('"')
+  const begin = text.slice(0, pos)
+  const inString = text.slice(pos + 1)
+
+  parseLoop(begin, inString, ...next)
+
+  pos = inString.indexOf('"')
+  // Check \" in string
+  let pos2 = 1
+  while (pos2 !== -1) {
+    pos2 = inString.indexOf('\\"', pos - 1)
+    if (pos2 === -1) break
+
+    if (pos2 === pos - 1) pos = inString.indexOf('"', pos + 1)
+    else pos2 = -1
+  }
+  const stringContent = inString.slice(0, pos)
+  const end = inString.slice(pos + 1)
+
+  appendChild(currentNode, {
+    ...string,
+    value: '"' + stringContent + '"'
+  })
+
+  parseLoop(end, ...next)
+
+  return true
+}
+
+/**
  * Parse string
  * @param text Text
  * @param next Next
@@ -314,58 +379,11 @@ const parseNumber = (text: string, ...next: string[]): boolean => {
 const parseString = (text: string, ...next: string[]): boolean => {
   // Do not consider ' as an operator in EJS
   if (inEJS && text.includes("'")) {
-    let pos = text.indexOf("'")
-    const begin = text.slice(0, pos)
-    const inString = text.slice(pos + 1)
-
-    // check correct close
-    const ejsClosePos = text.indexOf('%>')
-
-    pos = inString.indexOf("'")
-    if (pos === -1 || (ejsClosePos !== -1 && ejsClosePos < pos)) return false
-    const stringContent = inString.slice(0, pos)
-    const end = inString.slice(pos + 1)
-
-    parseLoop(begin, inString, ...next)
-
-    appendChild(currentNode, {
-      ...string,
-      value: "'" + stringContent + "'"
-    })
-
-    parseLoop(end, ...next)
-
-    return true
+    return processSingleQuoteString(text, ...next)
   }
 
   if (text.includes('"')) {
-    let pos = text.indexOf('"')
-    const begin = text.slice(0, pos)
-    const inString = text.slice(pos + 1)
-
-    parseLoop(begin, inString, ...next)
-
-    pos = inString.indexOf('"')
-    // Check \" in string
-    let pos2 = 1
-    while (pos2 !== -1) {
-      pos2 = inString.indexOf('\\"', pos - 1)
-      if (pos2 === -1) break
-
-      if (pos2 === pos - 1) pos = inString.indexOf('"', pos + 1)
-      else pos2 = -1
-    }
-    const stringContent = inString.slice(0, pos)
-    const end = inString.slice(pos + 1)
-
-    appendChild(currentNode, {
-      ...string,
-      value: '"' + stringContent + '"'
-    })
-
-    parseLoop(end, ...next)
-
-    return true
+    return processDoubleQuoteString(text, ...next)
   }
 
   return false
@@ -598,17 +616,7 @@ const parseOperator = (text: string, ...next: string[]): boolean => {
   return true
 }
 
-/**
- * Parse loop
- * @param text Text
- * @param next Next
- */
-const parseLoop = (text: string, ...next: string[]): void => {
-  if (!text) return
-
-  text = text.trim()
-
-  // Find first occurence
+const getMin = (text: string): { index: number; pos: number } => {
   const positions = []
   // Comments (0&1)
   positions.push(findFirstInText(text, [inlineComment]))
@@ -653,6 +661,22 @@ const parseLoop = (text: string, ...next: string[]): void => {
       min.index = index
     }
   })
+
+  return min
+}
+
+/**
+ * Parse loop
+ * @param text Text
+ * @param next Next
+ */
+const parseLoop = (text: string, ...next: string[]): void => {
+  if (!text) return
+
+  text = text.trim()
+
+  // Find first occurence
+  const min = getMin(text)
 
   switch (min.index) {
     case 0:
