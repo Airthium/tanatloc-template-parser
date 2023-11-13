@@ -9,23 +9,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.21"
-    "@types/jest": "npm:29.5.7"
-    "@types/node": "npm:20.8.10"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.22"
+    "@types/jest": "npm:29.5.8"
+    "@types/node": "npm:20.9.0"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
-    prettier: "npm:3.0.3"
+    prettier: "npm:3.1.0"
     ts-jest: "npm:29.1.1"
     typedoc: "npm:0.25.3"
     typescript: "npm:5.2.2"
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.21":
-  version: 1.1.21
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.21"
-  checksum: 3fda2f53763f1e9f482ae55551df4b0e08fd8860ae53f6a4a45df0ecaf9ac6949d5e54d6c3d55a6e2ef77e58de7d200632f61b022b87d5bfaaacc3a2e0cb90c8
+"@airthium/typedoc-plugin-airthium@npm:1.1.22":
+  version: 1.1.22
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.22"
+  checksum: 8b5da279d340ebd152f36c94238283d10bd8103f983fd58db4cbc799847aedcec3a15d04d2d5708a7780795aede78050baabc2f7ccbb3f6905624c20c5423937
   languageName: node
   linkType: hard
 
@@ -867,13 +867,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.7":
-  version: 29.5.7
-  resolution: "@types/jest@npm:29.5.7"
+"@types/jest@npm:29.5.8":
+  version: 29.5.8
+  resolution: "@types/jest@npm:29.5.8"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 231c873f3d1ddac973b8f8f2ad7760677d941d85fb52d1c5dc4a311bafba4c2c1658a1040fd7054a51f4d1841f51c6ca4cabf70675ee4fa9e10fc5b8066e1de1
+  checksum: a28e7827ea7e1a2aace6a386868fa6b8402c162d6c71570aed2c29d3745ddc22ceef6899a20643071817905d3c57b670a7992fc8760bff65939351fd4dc481cf
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.8.10":
+"@types/node@npm:*":
   version: 20.8.10
   resolution: "@types/node@npm:20.8.10"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: caaa3ae9294f1bfdacb029a916c64af63cbcea613a52f53ea86f93c91779859af177b2b68113ef835194519f5e76cadda08559929b68297f1a8a568c207f9f66
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.9.0":
+  version: 20.9.0
+  resolution: "@types/node@npm:20.9.0"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 755d07de735eafda4e20af75ad9d03bdbfddef327d790e9a896142eac7493db5d8501591376e1c8227aa12eeb88e522bc727c6024504842ed40e539e8a466db9
   languageName: node
   linkType: hard
 
@@ -3347,12 +3356,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.0.3":
-  version: 3.0.3
-  resolution: "prettier@npm:3.0.3"
+"prettier@npm:3.1.0":
+  version: 3.1.0
+  resolution: "prettier@npm:3.1.0"
   bin:
     prettier: bin/prettier.cjs
-  checksum: f950887bc03c5b970d8c6dd129364acfbbc61e7b46aec5d5ce17f4adf6404e2ef43072c98b51c4786e0eaca949b307d362a773fd47502862d754b5a328fa2b26
+  checksum: a45ea70aa97fde162ea4c4aba3dfc7859aa6a732a1db34458d9535dc3c2c16d3bc3fb5689e6cd76aa835562555303b02d9449fd2e15af3b73c8053557e25c5b6
   languageName: node
   linkType: hard
 
