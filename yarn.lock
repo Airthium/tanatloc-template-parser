@@ -9,9 +9,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.22"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.23"
     "@types/jest": "npm:29.5.8"
-    "@types/node": "npm:20.9.0"
+    "@types/node": "npm:20.9.2"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
@@ -22,10 +22,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.22":
-  version: 1.1.22
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.22"
-  checksum: 8b5da279d340ebd152f36c94238283d10bd8103f983fd58db4cbc799847aedcec3a15d04d2d5708a7780795aede78050baabc2f7ccbb3f6905624c20c5423937
+"@airthium/typedoc-plugin-airthium@npm:1.1.23":
+  version: 1.1.23
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.23"
+  checksum: 843c4473d6322c05c4f48ffbbaebed848f460c5d569c8f2816008c5d79f2f03f3175384a797e5300bef4189646caae0fd1e05258b672567fe67b70139d923761
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.9.0":
+"@types/node@npm:*":
   version: 20.9.0
   resolution: "@types/node@npm:20.9.0"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 755d07de735eafda4e20af75ad9d03bdbfddef327d790e9a896142eac7493db5d8501591376e1c8227aa12eeb88e522bc727c6024504842ed40e539e8a466db9
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.9.2":
+  version: 20.9.2
+  resolution: "@types/node@npm:20.9.2"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 891a035a5b7796001f5daaec03b2d84ebb67d731b67abb34c352af1b5b1f53beb4a92f0f6a66f6e0ed97191c3022cc8c830e048f8a5c53806e8ab248873a7c7b
   languageName: node
   linkType: hard
 
