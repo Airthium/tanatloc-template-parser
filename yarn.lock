@@ -10,15 +10,15 @@ __metadata:
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
     "@airthium/typedoc-plugin-airthium": "npm:1.1.23"
-    "@types/jest": "npm:29.5.8"
-    "@types/node": "npm:20.9.2"
+    "@types/jest": "npm:29.5.10"
+    "@types/node": "npm:20.10.0"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
     prettier: "npm:3.1.0"
     ts-jest: "npm:29.1.1"
-    typedoc: "npm:0.25.3"
-    typescript: "npm:5.2.2"
+    typedoc: "npm:0.25.4"
+    typescript: "npm:5.3.2"
   languageName: unknown
   linkType: soft
 
@@ -867,13 +867,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.5.8":
-  version: 29.5.8
-  resolution: "@types/jest@npm:29.5.8"
+"@types/jest@npm:29.5.10":
+  version: 29.5.10
+  resolution: "@types/jest@npm:29.5.10"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: a28e7827ea7e1a2aace6a386868fa6b8402c162d6c71570aed2c29d3745ddc22ceef6899a20643071817905d3c57b670a7992fc8760bff65939351fd4dc481cf
+  checksum: b46171d59d12a5f69bbe710f65eaf59a8073337c6b4a67dff8158575caec53f1c61f8a7d645b34d6ac3c4ea398acd30f0c5d1c4a131c0c918798019264a3397d
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.9.2":
+"@types/node@npm:*":
   version: 20.9.2
   resolution: "@types/node@npm:20.9.2"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 891a035a5b7796001f5daaec03b2d84ebb67d731b67abb34c352af1b5b1f53beb4a92f0f6a66f6e0ed97191c3022cc8c830e048f8a5c53806e8ab248873a7c7b
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.10.0":
+  version: 20.10.0
+  resolution: "@types/node@npm:20.10.0"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: f379e57d9d28cb5f3d8eab943de0c54a0ca2f95ee356e1fe2a1a4fa718b740103ae522c50ce107cffd52c3642ef3244cfc55bf5369081dd6c48369c8587b21ae
   languageName: node
   linkType: hard
 
@@ -3871,39 +3880,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.3":
-  version: 0.25.3
-  resolution: "typedoc@npm:0.25.3"
+"typedoc@npm:0.25.4":
+  version: 0.25.4
+  resolution: "typedoc@npm:0.25.4"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
     minimatch: "npm:^9.0.3"
     shiki: "npm:^0.14.1"
   peerDependencies:
-    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: fcd0dfa48c2374037356968bcf931022c05783bdce41e5cd804221f427d33b402e2079c4b54fa72c9ebd0315d83e1faef52439e481a1cc8a3bd06de2fd3790aa
+  checksum: 2790b3f16b26a477cfc9b72f81b4f209c885c554f9c7b2557d5d85ea4c8bd6a51584af8d29eec123a26398c4986f52b0c3c7a9c32352a223c33a96bd211f288f
   languageName: node
   linkType: hard
 
-"typescript@npm:5.2.2":
-  version: 5.2.2
-  resolution: "typescript@npm:5.2.2"
+"typescript@npm:5.3.2":
+  version: 5.3.2
+  resolution: "typescript@npm:5.3.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 91ae3e6193d0ddb8656d4c418a033f0f75dec5e077ebbc2bd6d76439b93f35683936ee1bdc0e9cf94ec76863aa49f27159b5788219b50e1cd0cd6d110aa34b07
+  checksum: d7dbe1fbe19039e36a65468ea64b5d338c976550394ba576b7af9c68ed40c0bc5d12ecce390e4b94b287a09a71bd3229f19c2d5680611f35b7c53a3898791159
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>":
-  version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#optional!builtin<compat/typescript>::version=5.2.2&hash=f3b441"
+"typescript@patch:typescript@npm%3A5.3.2#optional!builtin<compat/typescript>":
+  version: 5.3.2
+  resolution: "typescript@patch:typescript@npm%3A5.3.2#optional!builtin<compat/typescript>::version=5.3.2&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 062c1cee1990e6b9419ce8a55162b8dc917eb87f807e4de0327dbc1c2fa4e5f61bc0dd4e034d38ff541d1ed0479b53bcee8e4de3a4075c51a1724eb6216cb6f5
+  checksum: 73c8bad74e732d93211c9d77f28b03307e2f5fc6a0afc73f4b783261ab567686a16d6ae958bdaef383a00be1b0b8c8b6741dd6ca3d13af4963fa7e47456d49c7
   languageName: node
   linkType: hard
 
