@@ -9,23 +9,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.28"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.29"
     "@types/jest": "npm:29.5.11"
-    "@types/node": "npm:20.11.5"
+    "@types/node": "npm:20.11.10"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
     prettier: "npm:3.2.4"
-    ts-jest: "npm:29.1.1"
+    ts-jest: "npm:29.1.2"
     typedoc: "npm:0.25.7"
     typescript: "npm:5.3.3"
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.28":
-  version: 1.1.28
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.28"
-  checksum: 0961fafc473ffdea1e22276a072ef9ddd7bd69b4cf9a3dbb97169f92a93fd74c02bcac04514aeff6c0cc21b1205447453d4c1ba39bbef12f155442a13dc526d0
+"@airthium/typedoc-plugin-airthium@npm:1.1.29":
+  version: 1.1.29
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.29"
+  checksum: 64c2ccf0ca675d016b71219b6e2747756ad8521f64bbeb63e7b318279d91b1e8e4293763603a1dfd9165fde34d433716f0002a005b279416518e1860f8f78d1f
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.11.5":
+"@types/node@npm:*":
   version: 20.11.5
   resolution: "@types/node@npm:20.11.5"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 6d18cec852f5cfbed3ec42b5c01c026e7a3f9da540d6e3d6738d4cee9979fb308cf27b6df7ba40a6553e7bc82e678f0ef53ba6e6ad52e5b86bd97b7783c2a42c
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.11.10":
+  version: 20.11.10
+  resolution: "@types/node@npm:20.11.10"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: aced8595c2786d4e60471772659add1e2e0d1f2b73d119820b2e1815426d6e52c6a77f1c7fca8ea46490c36f7959cc46b0dc609fa2e80b7fd24f9a7d696c2210
   languageName: node
   linkType: hard
 
@@ -3818,9 +3827,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.1.1":
-  version: 29.1.1
-  resolution: "ts-jest@npm:29.1.1"
+"ts-jest@npm:29.1.2":
+  version: 29.1.2
+  resolution: "ts-jest@npm:29.1.2"
   dependencies:
     bs-logger: "npm:0.x"
     fast-json-stable-stringify: "npm:2.x"
@@ -3847,7 +3856,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 6c45e0aeeff9cc54a64f931c43e1b99f4a1f0ddf44786cc128e7e55603ab7473c8c8f62fd83bd7e51bfe83e3c0c683132152efaeb844516bf7c923f4e92d157d
+  checksum: c2f51f0241f89d127d41392decbcb83b5dfd5e57ab9d50220aa7b7e2f9b3f3b07ccdbba33311284df1c41941879e4ddfad44b15a9d0da4b74bd1b98702b729df
   languageName: node
   linkType: hard
 
