@@ -9,23 +9,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.30"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.31"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.11.16"
+    "@types/node": "npm:20.11.17"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
     prettier: "npm:3.2.5"
     ts-jest: "npm:29.1.2"
-    typedoc: "npm:0.25.7"
+    typedoc: "npm:0.25.8"
     typescript: "npm:5.3.3"
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.30":
-  version: 1.1.30
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.30"
-  checksum: 10c0/dc01cceecc3ca108015fbaf8509a8636def614c1c8f94c01db6742b5c4c5026dea136a48b26859b1d0fc3fa6d7aa20ddbcf04702742b9a06382b10dcab7acc3c
+"@airthium/typedoc-plugin-airthium@npm:1.1.31":
+  version: 1.1.31
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.31"
+  checksum: 10c0/1dd56b95a9282c25898a7e1d4cbc8e0b0aba33e1d15a27b67946306403e755615ed4ceffecbec24c79865071a9d09da0c60200dfac539ea73430339acdec4b1f
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.11.16":
+"@types/node@npm:*":
   version: 20.11.16
   resolution: "@types/node@npm:20.11.16"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/4886b90278e9c877a84efd3edd4667cd990e032d77268d2a798b99ebc1901ea336fa7dfbe9eaf4ad6ad1da9ce2ec31baf300038a3905838692362eb19904ebde
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.11.17":
+  version: 20.11.17
+  resolution: "@types/node@npm:20.11.17"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/1f30dae80b416cbf38f133a619ffb0e9fb9e7bc58f82d900bf73816ae5781740c4640892bf5971dd9c12570d5d05241646be3e7540bb4e059322ec6af4e51e15
   languageName: node
   linkType: hard
 
@@ -3865,9 +3874,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.25.7":
-  version: 0.25.7
-  resolution: "typedoc@npm:0.25.7"
+"typedoc@npm:0.25.8":
+  version: 0.25.8
+  resolution: "typedoc@npm:0.25.8"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
@@ -3877,7 +3886,7 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: 10c0/e663be0534dd56f45f041a478ee0613a1bf96cad7208a5cfc771981c904d0f30d8dca51956486f125f8004237264acc5dd45920fa6a0a32e351e36d74279abb1
+  checksum: 10c0/f1adb64bd124a04da57227bdd7ec367a38e17b59e33b1acfaf04da560efc6318b0f7a0dfee85b90671b5e81e1e6dca6ca0d7157c10774c7a1a1f0931e8b30099
   languageName: node
   linkType: hard
 
