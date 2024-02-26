@@ -24,13 +24,13 @@
     "typescript": "5.3.3"
   },
   "devDependencies": {
-    "@airthium/typedoc-plugin-airthium": "1.1.32",
+    "@airthium/typedoc-plugin-airthium": "1.1.33",
     "@types/jest": "29.5.12",
-    "@types/node": "20.11.19",
+    "@types/node": "20.11.20",
     "depcheck": "1.4.7",
     "jest": "29.7.0",
     "prettier": "3.2.5",
     "ts-jest": "29.1.2",
-    "typedoc": "0.25.8"
+    "typedoc": "0.25.9"
   }
 }
