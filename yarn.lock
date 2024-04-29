@@ -9,7 +9,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.39"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.40"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.12.7"
     colors: "npm:1.4.0"
@@ -22,10 +22,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.39":
-  version: 1.1.39
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.39"
-  checksum: 10c0/862bd9ff9d2f4d814b7c2a4203810d6dedaca4c7642395ad3335053f79505f1415bea0cbdb6811625df42160bab18ada50da618f8ec3bf4da298c81f1caf18d3
+"@airthium/typedoc-plugin-airthium@npm:1.1.40":
+  version: 1.1.40
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.40"
+  checksum: 10c0/bece81a5b962f9af20fb4114870e9424d10802342c86fd230f5732410646300d5bbe80a85db0e08993c0e224e73b02bc034889b8104bfdf90cff6163491a9392
   languageName: node
   linkType: hard
 
