@@ -9,23 +9,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.42"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.43"
     "@types/jest": "npm:29.5.12"
     "@types/node": "npm:20.12.12"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
     prettier: "npm:3.2.5"
-    ts-jest: "npm:29.1.2"
+    ts-jest: "npm:29.1.3"
     typedoc: "npm:0.25.13"
     typescript: "npm:5.4.5"
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.42":
-  version: 1.1.42
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.42"
-  checksum: 10c0/ed7ca98d07c95de9e0cea088828882ce525250b566a06c8dcb9536ea50d7f351fe2d58036fb3bbbc963aea85c6b85fd312e1a5594495dc7345c06b009186dadf
+"@airthium/typedoc-plugin-airthium@npm:1.1.43":
+  version: 1.1.43
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.43"
+  checksum: 10c0/6859e5a817f3df69939ff7f0afc91788270c75af2d5b9d4b2f550354a149b91a29311cf50007cc863349d3ce4e921e7bef86ad844ef6d09287fffe0d10cc52b5
   languageName: node
   linkType: hard
 
@@ -3833,9 +3833,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.1.2":
-  version: 29.1.2
-  resolution: "ts-jest@npm:29.1.2"
+"ts-jest@npm:29.1.3":
+  version: 29.1.3
+  resolution: "ts-jest@npm:29.1.3"
   dependencies:
     bs-logger: "npm:0.x"
     fast-json-stable-stringify: "npm:2.x"
@@ -3847,12 +3847,15 @@ __metadata:
     yargs-parser: "npm:^21.0.1"
   peerDependencies:
     "@babel/core": ">=7.0.0-beta.0 <8"
+    "@jest/transform": ^29.0.0
     "@jest/types": ^29.0.0
     babel-jest: ^29.0.0
     jest: ^29.0.0
     typescript: ">=4.3 <6"
   peerDependenciesMeta:
     "@babel/core":
+      optional: true
+    "@jest/transform":
       optional: true
     "@jest/types":
       optional: true
@@ -3862,7 +3865,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/c2f51f0241f89d127d41392decbcb83b5dfd5e57ab9d50220aa7b7e2f9b3f3b07ccdbba33311284df1c41941879e4ddfad44b15a9d0da4b74bd1b98702b729df
+  checksum: 10c0/7810882f53c7d722dfcd9fbe65c1c80258ec4bd216a21448f27759f2f06d57a2f3f2472e1efe4a5e29fd4064dce07a93c8dbf3b13e77dac0e32419a30756f8f5
   languageName: node
   linkType: hard
 
