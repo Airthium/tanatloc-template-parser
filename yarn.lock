@@ -9,23 +9,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.43"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.44"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.14.0"
+    "@types/node": "npm:20.14.2"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
-    prettier: "npm:3.3.0"
+    prettier: "npm:3.3.1"
     ts-jest: "npm:29.1.4"
     typedoc: "npm:0.25.13"
     typescript: "npm:5.4.5"
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.43":
-  version: 1.1.43
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.43"
-  checksum: 10c0/6859e5a817f3df69939ff7f0afc91788270c75af2d5b9d4b2f550354a149b91a29311cf50007cc863349d3ce4e921e7bef86ad844ef6d09287fffe0d10cc52b5
+"@airthium/typedoc-plugin-airthium@npm:1.1.44":
+  version: 1.1.44
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.44"
+  checksum: 10c0/d76107776f8d2fef7217ea17410cf137d68e1582e5337981939fb0ffb0f3057ad6b46273f7d86ab7b3c5a10671472bf5befeaf272843086e0642168466ca6caf
   languageName: node
   linkType: hard
 
@@ -884,12 +884,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:20.14.0":
+"@types/node@npm:*":
   version: 20.14.0
   resolution: "@types/node@npm:20.14.0"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/29ccc7592e9ca6b81d00f3a6673241d08e9042d801b10adfd9ebcbbf326208e0a0133a8d146158db18d02a68b85d9ce1fd94e6e1e5be0da263129bf6e42eb22d
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.14.2":
+  version: 20.14.2
+  resolution: "@types/node@npm:20.14.2"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/2d86e5f2227aaa42212e82ea0affe72799111b888ff900916376450b02b09b963ca888b20d9c332d8d2b833ed4781987867a38eaa2e4863fa8439071468b0a6f
   languageName: node
   linkType: hard
 
@@ -3343,12 +3352,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.3.0":
-  version: 3.3.0
-  resolution: "prettier@npm:3.3.0"
+"prettier@npm:3.3.1":
+  version: 3.3.1
+  resolution: "prettier@npm:3.3.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/d033c356320aa2e468bf29c931b094ac730d2f4defd5eb2989d8589313dec901d2fc866e3788f3d161e420b142ea4ec3dda535dbe0169ef4d0026397a68ba9cf
+  checksum: 10c0/c25a709c9f0be670dc6bcb190b622347e1dbeb6c3e7df8b0711724cb64d8647c60b839937a4df4df18e9cfb556c2b08ca9d24d9645eb5488a7fc032a2c4d5cb3
   languageName: node
   linkType: hard
 
