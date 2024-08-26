@@ -9,7 +9,7 @@
     "url": "https://github.com/orgs/Airthium/people"
   },
   "license": "AGPL3+",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "scripts": {
     "depcheck": "depcheck --ignores @babel/preset-env,@babel/preset-typescript,@types/babel__preset-env,@types/jest,@airthium/typedoc-plugin-airthium",
     "prettier": "prettier -l '**/*.{js,jsx,ts,tsx,json,md,css}'",
@@ -24,8 +24,8 @@
     "typescript": "5.5.4"
   },
   "devDependencies": {
-    "@airthium/typedoc-plugin-airthium": "1.1.54",
-    "@babel/preset-env": "7.25.3",
+    "@airthium/typedoc-plugin-airthium": "1.1.55",
+    "@babel/preset-env": "7.25.4",
     "@babel/preset-typescript": "7.24.7",
     "@types/babel__preset-env": "7",
     "@types/jest": "29.5.12",
