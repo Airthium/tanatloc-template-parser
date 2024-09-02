@@ -9,12 +9,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@airthium/tanatloc-template-parser@workspace:."
   dependencies:
-    "@airthium/typedoc-plugin-airthium": "npm:1.1.55"
+    "@airthium/typedoc-plugin-airthium": "npm:1.1.56"
     "@babel/preset-env": "npm:7.25.4"
     "@babel/preset-typescript": "npm:7.24.7"
     "@types/babel__preset-env": "npm:7"
     "@types/jest": "npm:29.5.12"
-    "@types/node": "npm:20.16.1"
+    "@types/node": "npm:20.16.3"
     colors: "npm:1.4.0"
     depcheck: "npm:1.4.7"
     jest: "npm:29.7.0"
@@ -24,10 +24,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@airthium/typedoc-plugin-airthium@npm:1.1.55":
-  version: 1.1.55
-  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.55"
-  checksum: 10c0/681ebaa6a29207d20f28162c10fda2d6e16ddfc80ee762662b63ef19e6f69d7b56a556d3fb25bbbd2a95183b965df3637e77e7e0d8ec8d154f779ed336687c69
+"@airthium/typedoc-plugin-airthium@npm:1.1.56":
+  version: 1.1.56
+  resolution: "@airthium/typedoc-plugin-airthium@npm:1.1.56"
+  checksum: 10c0/10728e142185910c6fd1aa553ee8f3c0ad700b20b219a8976f5257745ab2b50fff0e6a624511b901300468d0381af6e78e5470ae39dda64f41b4a1dbed866833
   languageName: node
   linkType: hard
 
@@ -1902,12 +1902,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.16.1":
-  version: 20.16.1
-  resolution: "@types/node@npm:20.16.1"
+"@types/node@npm:20.16.3":
+  version: 20.16.3
+  resolution: "@types/node@npm:20.16.3"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10c0/cac13c0f42467df3254805a671ca9e74a6eb7c41568de972e26b10dcc448a45743aaf00e9e5fce4a9214da5bc8444fe902918e105dac5a224e24e83fd9989a97
+  checksum: 10c0/907c01d58ae36695fbed0b101e7a14cc2e0c5b9b2ba7904ef21cef093e4aac0649ac2a7a283fc94e19311dd0551d778445dd45fcf2d8bd45c494c9ecd802de69
   languageName: node
   linkType: hard
 
