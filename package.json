@@ -1,6 +1,6 @@
 {
   "name": "@airthium/tanatloc-template-parser",
-  "version": "1.0.75",
+  "version": "1.0.76",
   "type": "module",
   "main": "index.js",
   "repository": "git@github.com:Airthium/tanatloc-template-parser.git",
@@ -24,7 +24,6 @@
     "typescript": "5.7.2"
   },
   "devDependencies": {
-    "@airthium/typedoc-plugin-airthium": "1.1.64",
     "@babel/preset-env": "7.26.0",
     "@babel/preset-typescript": "7.26.0",
     "@types/babel__preset-env": "7",

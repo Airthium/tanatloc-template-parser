@@ -4,6 +4,5 @@
   "entryPointStrategy": "expand",
   "includeVersion": true,
   "out": "doc",
-  "readme": "README.md",
-  "plugin": ["@airthium/typedoc-plugin-airthium"]
+  "readme": "README.md"
 }
